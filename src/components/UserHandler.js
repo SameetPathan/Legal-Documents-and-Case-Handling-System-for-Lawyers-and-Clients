@@ -1,13 +1,19 @@
 // UserTypeSelection.js
 import React, { useState } from "react";
 import { FaUser, FaGavel } from "react-icons/fa";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom';
 
 const UserHandler = ({ onSelectUserType }) => {
   const [selectedType, setSelectedType] = useState(null);
 
   const handleUserTypeSelection = (userType) => {
     setSelectedType(userType);
-    onSelectUserType(userType);
+    //onSelectUserType(userType);
   };
 
   return (
@@ -16,7 +22,7 @@ const UserHandler = ({ onSelectUserType }) => {
     <div className="container mt-5">
      
       <div className="row justify-content-center">
-        <button
+        <Link to="/client"
           className={`btn btn-${
             selectedType === "client" ? "success" : "outline-success"
           } m-2`}
@@ -25,8 +31,8 @@ const UserHandler = ({ onSelectUserType }) => {
           <FaUser size={40} className="mb-2" />
           <br />
           Client
-        </button>
-        <button
+        </Link>
+        <Link to="/lawyer"
           className={`btn btn-${
             selectedType === "lawyer" ? "primary" : "outline-primary"
           } m-2`}
@@ -35,7 +41,7 @@ const UserHandler = ({ onSelectUserType }) => {
           <FaGavel size={40} className="mb-2" />
           <br />
           Lawyer
-        </button>
+        </Link>
       </div>
     </div>
     </>

@@ -11,6 +11,12 @@ import ForceLogin from './components/ForceLogin';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import UserHandler from './components/UserHandler';
+import ClientHome from './components/Clients/ClientHome';
+import LawyerHome from './components/Lawyers/LawyerHome';
+import AddCaseForm from './components/Clients/AddCaseForm';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
  
@@ -31,11 +37,14 @@ function App() {
             
             <Navbar setCurrentAccount={setCurrentAccount} setCurrentBalanace={setCurrentBalanace} currentAccount={currentAccount} currentBalance={currentBalance}></Navbar>
             
-            <div className='container-fluid'>
+            <div>
            
               <Routes> 
                
                  <Route exact path='/' element={ <UserHandler></UserHandler>}></Route>
+                 <Route exact path='/client' element={ <ClientHome></ClientHome>}></Route>
+                 <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
+                 <Route exact path='/client-add-case' element={<AddCaseForm></AddCaseForm>}></Route>
             
              
          
@@ -60,6 +69,7 @@ function App() {
               </Router>
             
         }
+        <ToastContainer />
         </div>
          
   

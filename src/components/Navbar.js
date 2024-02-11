@@ -45,7 +45,7 @@ function Navbar(props) {
         <nav className="navbar navbar-expand-lg navbar-dark bgd">
           <div className="logo-holder logo-3 mr-3">
             <a>
-              <h3>D & C Systems</h3>
+              <h3>Legal Vault</h3>
               <p>A blockchain DApp</p>
             </a>
           </div>

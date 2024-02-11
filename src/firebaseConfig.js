@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyAiJf1SDTPpfRHr4NwckDu_1ImNpju6y14",
   authDomain: "jarvis-systems-commons.firebaseapp.com",
@@ -11,11 +12,6 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
-
-
-
-
-
 
 
 
