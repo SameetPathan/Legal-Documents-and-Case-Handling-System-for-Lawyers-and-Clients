@@ -42,6 +42,18 @@ const UserHandler = ({ onSelectUserType }) => {
           <br />
           Lawyer
         </Link>
+
+        <Link to="/admin"
+        className={`btn btn-${
+          selectedType === "lawyer" ? "primary" : "outline-primary"
+        } m-2`}
+        onClick={() => handleUserTypeSelection("admin")}
+      >
+        <FaGavel size={40} className="mb-2" />
+        <br />
+        Admin (Currently Visible for all in dev mode) 
+      </Link>
+
       </div>
     </div>
     </>

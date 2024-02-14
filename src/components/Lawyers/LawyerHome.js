@@ -2,6 +2,12 @@
 import React from 'react';
 import { FaEye, FaClipboardList, FaMoneyBillWave } from 'react-icons/fa';
 import DashboardHeading from '../DashboardHeading';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom';
 
 // Define the LawyerHome component
 function LawyerHome() {
@@ -17,10 +23,13 @@ function LawyerHome() {
           <div className="card-body">
             <h5 className="card-title">View Client Cases <br></br><br></br></h5>
             <p className="card-text">Click below to view cases of al clients<br></br><br></br></p>
-            <button className="btn btn-primary">
-              <FaEye className="mr-2" />
-              View Cases
-            </button>
+
+            <Link to="/lawyer-case-view" className="btn btn-primary">
+            <FaEye className="mr-2" />
+            View Cases
+          </Link>
+
+           
           </div>
         </div>
 

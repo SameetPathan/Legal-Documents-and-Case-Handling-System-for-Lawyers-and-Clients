@@ -1,7 +1,6 @@
 import { FaFile, FaCheck, FaCalendarAlt } from 'react-icons/fa';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getDatabase, ref as rtdbRef, push } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getDatabase, ref as rtdbRef, push, set } from 'firebase/database';
 import { app } from '../../firebaseConfig';
 import DashboardHeading from '../DashboardHeading';
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import { toast } from 'react-toastify';
 
 
 function AddCaseForm() {
+
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -56,8 +56,19 @@ function AddCaseForm() {
       return;
     }
 
-    const db = getFirestore(app);
-    const casesCollection = collection(db, 'your_collection_name');
+    const storage = getStorage(app);
+    const files = Array.from(formData.uploadedFiles);
+
+    const filePromises = files.map(async (file) => {
+      const fileRef = storageRef(storage, `Client-Cases/${file.name}`);
+      await uploadBytes(fileRef, file);
+      return getDownloadURL(fileRef);
+    });
+
+    const fileUrls = await Promise.all(filePromises);
+
+    const dbRealtime = getDatabase(app);
+    const casesRef = rtdbRef(dbRealtime, 'Client-Cases');
 
     const caseData = {
       firstName: formData.firstName,
@@ -77,26 +88,15 @@ function AddCaseForm() {
       caseHistory: formData.caseHistory,
       status: 'Pending Verification',
       timestamp: new Date().toISOString(),
+      caseDocuments:fileUrls
     };
 
-    const caseRef = await addDoc(casesCollection, caseData);
-    const storage = getStorage(app);
-    const files = Array.from(formData.uploadedFiles);
+    // Push the new case data to the Realtime Database
+    const newCaseRef = push(casesRef);
+    set(newCaseRef, caseData);
 
-    const filePromises = files.map(async (file) => {
-      const fileRef = ref(storage, `cases/${caseRef.id}/${file.name}`);
-      await uploadBytes(fileRef, file);
-      return getDownloadURL(fileRef);
-    });
-
-    const fileUrls = await Promise.all(filePromises);
-    const dbRealtime = getDatabase(app);
-    const imagePathsRef = rtdbRef(dbRealtime, `cases/${caseRef.id}/imagePaths`);
-
-    fileUrls.forEach((url) => {
-      push(imagePathsRef, url);
-    });
-
+    
+    // Clear the form data
     setFormData({
       firstName: '',
       middleName: '',
@@ -115,8 +115,8 @@ function AddCaseForm() {
       caseHistory: '',
       uploadedFiles: null,
     });
-   toast.success("Case submitted successfully!")
-   
+
+    toast.success("Case submitted successfully!");
   };
 
   return (

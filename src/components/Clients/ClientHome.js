@@ -33,10 +33,11 @@ function ClientHome() {
             <div className="card-body">
               <h5 className="card-title">Add Documents</h5>
               <p className="card-text">Click below to add new documents</p>
-              <button className="btn btn-success">
+              <Link to="/client-add-document" className="btn btn-success">
                 <FaFile className="mr-2" />
                 Add Documents
-              </button>
+              </Link>
+              
             </div>
           </div>
         </div>
@@ -61,10 +62,11 @@ function ClientHome() {
             <div className="card-body">
               <h5 className="card-title">Check Document Verification Status</h5>
               <p className="card-text">Click below to check the status of document verification</p>
-              <button className="btn btn-warning">
-                <FaCheck className="mr-2" />
-                Check Status
-              </button>
+              <Link to="/client-view-document" className="btn btn-warning">
+              <FaCheck className="mr-2" />
+              Check Status
+            </Link>
+             
             </div>
           </div>
         </div>

@@ -16,6 +16,9 @@ import LawyerHome from './components/Lawyers/LawyerHome';
 import AddCaseForm from './components/Clients/AddCaseForm';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ViewCases from './components/Lawyers/ViewCases';
+import AddDocuments from './components/Clients/AddDocuments';
+import ViewDocuments from './components/Clients/ViewDocuments';
 
 
 
@@ -44,7 +47,11 @@ function App() {
                  <Route exact path='/' element={ <UserHandler></UserHandler>}></Route>
                  <Route exact path='/client' element={ <ClientHome></ClientHome>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
+                 <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>
                  <Route exact path='/client-add-case' element={<AddCaseForm></AddCaseForm>}></Route>
+                 <Route exact path='/lawyer-case-view' element={<ViewCases></ViewCases>}></Route>
+                 <Route exact path='/client-add-document' element={<AddDocuments></AddDocuments>}></Route>
+                 <Route exact path='/client-view-document' element={<ViewDocuments userId={"sameet"} userType={"normal"}></ViewDocuments>}></Route>
             
              
          
