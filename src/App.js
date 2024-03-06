@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ViewCases from './components/Lawyers/ViewCases';
 import AddDocuments from './components/Clients/AddDocuments';
 import ViewDocuments from './components/Clients/ViewDocuments';
+import UserProfileForm from './components/UserProfileForm';
 
 
 
@@ -27,6 +28,7 @@ function App() {
 
   const [currentAccount, setCurrentAccount] = useState(null);
   const [currentBalance, setCurrentBalanace] = useState(null);
+  const [userDetails, setuserDetails] = useState([]);
 
   return <>
 
@@ -38,13 +40,14 @@ function App() {
             <Router>
          
             
-            <Navbar setCurrentAccount={setCurrentAccount} setCurrentBalanace={setCurrentBalanace} currentAccount={currentAccount} currentBalance={currentBalance}></Navbar>
+            <Navbar userDetails={userDetails} setCurrentAccount={setCurrentAccount} setCurrentBalanace={setCurrentBalanace} currentAccount={currentAccount} currentBalance={currentBalance}></Navbar>
             
             <div>
            
               <Routes> 
                
-                 <Route exact path='/' element={ <UserHandler></UserHandler>}></Route>
+                 <Route exact path='/' element={ <UserHandler setuserDetails={setuserDetails} userDetails={userDetails}></UserHandler>}></Route>
+                 <Route exact path='/profile' element={<UserProfileForm ></UserProfileForm>}></Route>
                  <Route exact path='/client' element={ <ClientHome></ClientHome>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
                  <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>

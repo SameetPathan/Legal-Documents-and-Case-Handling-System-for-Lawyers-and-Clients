@@ -1,6 +1,7 @@
 import React from "react";
 import Login from "./Login";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+import { FaHome, FaSignInAlt, FaArrowLeft, FaUser } from "react-icons/fa";
 
 function Navbar(props) {
   const handleGoBack = () => {
@@ -10,6 +11,8 @@ function Navbar(props) {
   const divStyle = {
     borderBottom: "0.1px solid white",
   };
+
+  
 
   return (
     <>
@@ -27,7 +30,8 @@ function Navbar(props) {
                   data-toggle="modal"
                   data-target="#exampleModal"
                 >
-                  Welcome,&nbsp;&nbsp;  
+                  <FaUser size={18} className="mr-1" />
+                  Welcome,&nbsp;&nbsp;
                   <span className="badge badge-light">
                     {" "}
                     {props.currentAccount}
@@ -44,10 +48,10 @@ function Navbar(props) {
 
         <nav className="navbar navbar-expand-lg navbar-dark bgd">
           <div className="logo-holder logo-3 mr-3">
-            <a>
+            <Link to="/" className="navbar-brand">
               <h3>Legal Vault</h3>
               <p>A blockchain DApp</p>
-            </a>
+            </Link>
           </div>
 
           <button
@@ -68,16 +72,23 @@ function Navbar(props) {
           >
             <ul className="navbar-nav mr-auto">
               {props.currentAccount ? (
-                <Link to="/" className="nav-link ml-5">
-                  Home
-                </Link>
+                <li className="nav-item">
+                  <Link to="/" className="nav-link">
+                    <FaHome className="mr-1" />
+                    Home
+                  </Link>
+                </li>
               ) : (
                 ""
               )}
             </ul>
             {props.currentAccount ? (
-              <button className="btn btn-secondary" onClick={handleGoBack}>
-                Go Back
+              <button
+                className="btn btn-secondary"
+                onClick={handleGoBack}
+              >
+                <FaArrowLeft className="mr-1" />
+              
               </button>
             ) : (
               ""
@@ -92,8 +103,6 @@ function Navbar(props) {
           </div>
         </nav>
       </div>
-      
-           
 
       <div
         className="modal fade"
@@ -102,69 +111,165 @@ function Navbar(props) {
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Profile
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span
-                    className="input-group-text text-success"
-                    id="basic-addon1"
-                  >
-                    User Address
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  disabled
-                  value={props.currentAccount}
-                  aria-describedby="basic-addon1"
-                />
-              </div>
+      <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title" id="exampleModalLabel">
+            Profile
+          </h5>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
 
-              <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                  <span
-                    className="input-group-text text-success"
-                    id="basic-addon1"
-                  >
-                    Eth Balance
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control "
-                  disabled
-                  value={props.currentBalance}
-                  aria-describedby="basic-addon1"
-                />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
+        <div className="input-group mb-3">
+        <div className="input-group-prepend">
+          <span
+            className="input-group-text text-success"
+            id="basic-addon1"
+          >
+            User Meta Address
+          </span>
+        </div>
+        <input
+          type="text"
+          className="form-control"
+          disabled
+          value={props.currentAccount}
+          aria-describedby="basic-addon1"
+        />
+      </div>
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
               >
-                Close
-              </button>
+                User Name
+              </span>
             </div>
+            <input
+              type="text"
+              className="form-control"
+              disabled
+              value={props.userDetails ?props.userDetails[0]:""}
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
+              >
+                User Phone Number
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              disabled
+              value={props.userDetails ?props.userDetails[1]:""}
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
+              >
+                User Email Id
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              disabled
+              value={props.userDetails ?props.userDetails[2]:""}
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
+              >
+                User Address
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              disabled
+              value={props.userDetails ?props.userDetails[3]:""}
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
+              >
+                User Type
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              disabled
+              value={props.userDetails ?props.userDetails[4]:""}
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+        
+
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span
+                className="input-group-text text-success"
+                id="basic-addon1"
+              >
+                Eth Balance
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control "
+              disabled
+              value={props.currentBalance}
+              aria-describedby="basic-addon1"
+            />
           </div>
         </div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
       </div>
     </>
   );
