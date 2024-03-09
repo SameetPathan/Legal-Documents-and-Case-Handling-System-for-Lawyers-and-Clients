@@ -53,11 +53,16 @@ const UserProfileForm = () => {
         );
 
         const isprofile = await ProfileContract.userExists(accounts[0]);
-
         if (isprofile) {
-          setisuserProfile(true);
+          const profile = await ProfileContract.getProfileById(accounts[0]);
+            setisuserProfile(profile);
+            setFullName(profile[0]);
+            setPhoneNumber(profile[1]);
+            setEmailId(profile[2]);
+            setUserAddress(profile[3]);
+            setUserType(profile[4]);
         } else {
-          setisuserProfile(false);
+          setisuserProfile([]);
         }
       }
     } catch (error) {
@@ -214,14 +219,15 @@ const UserProfileForm = () => {
               >
                 <option value="lawyer">Lawyer</option>
                 <option value="client">Client</option>
-                <option value="new">New</option>
+                <option value="admin" className="text-danger">Admin (Dev Mode)</option>
+                <option value="master" className="text-danger">Master (Dev Mode)</option>
               </Form.Control>
             </Col>
           </Form.Group>
 
           {isuserProfile ? (
-            <Button variant="primary" type="submit">
-              Update Profile
+            <Button variant="danger" type="submit">
+              Update Profile (Dev Mode)
             </Button>
           ) : (
             <Button variant="primary" type="submit">

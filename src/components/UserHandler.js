@@ -39,7 +39,7 @@ const UserHandler = (props) => {
           props.setuserDetails(profile)
           setUserProfile(profile);
         }else{
-          setUserProfile("new");
+          setUserProfile([]);
         }
         
         
@@ -56,26 +56,12 @@ const UserHandler = (props) => {
 
   const renderDashboardButtons = () => {
     if (!userProfile) {
-      return null; // Profile not loaded yet
+      return null; 
     }
 
-    const userType = userProfile[4]; // Assuming userType is the 5th element in the array
+    const userType = userProfile[4]; 
 
     switch (userType) {
-      case "new":
-        return (
-          <Link
-          to="/profile"
-          className={`btn btn-${
-            selectedType === "client" ? "success" : "outline-success"
-          } m-2`}
-          onClick={() => handleUserTypeSelection("profile")}
-        >
-          <FaUser size={40} className="mb-2" />
-          <br />
-          Profile Dashboard
-        </Link>
-        );
       case "client":
         return (
           <Link
@@ -158,7 +144,19 @@ const UserHandler = (props) => {
           </>
         );
       default:
-        return null;
+        return (
+          <Link
+          to="/client"
+          className={`btn btn-${
+            selectedType === "client" ? "success" : "outline-success"
+          } m-2`}
+          onClick={() => handleUserTypeSelection("client")}
+        >
+          <FaUser size={40} className="mb-2" />
+          <br />
+          Welcome to Client Dashboard
+        </Link>
+        );
     }
   };
 

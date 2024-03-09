@@ -259,14 +259,23 @@ function Navbar(props) {
             />
           </div>
         </div>
+        
         <div className="modal-footer">
-          <button
+        <Link
+        to="/profile"
             type="button"
-            className="btn btn-secondary"
-            data-dismiss="modal"
+            className="btn btn-danger"
+           
           >
-            Close
-          </button>
+            Update Profile (Dev Mode)
+          </Link>
+          <button
+          type="button"
+          className="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          Close
+        </button>
         </div>
       </div>
     </div>
