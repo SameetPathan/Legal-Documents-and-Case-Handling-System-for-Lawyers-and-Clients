@@ -31,8 +31,9 @@ function App() {
   const [userDetails, setuserDetails] = useState([]);
 
   return <>
+  <div>
 
-    <div className="App">
+    <div className="App" >
         
        
 
@@ -81,7 +82,7 @@ function App() {
         }
         <ToastContainer />
         </div>
-         
+        </div>
   
   </>;
 }
