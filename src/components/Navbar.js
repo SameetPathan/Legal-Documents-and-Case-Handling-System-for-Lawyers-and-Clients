@@ -34,7 +34,7 @@ function Navbar(props) {
                   Welcome,&nbsp;&nbsp;
                   <span className="badge badge-light">
                     {" "}
-                    {props.currentAccount}
+                    {props.userDetails ?props.userDetails[0]:""}
                   </span>
                 </button>
               ) : (
