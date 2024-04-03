@@ -38,10 +38,10 @@ function LawyerHome() {
           <div className="card-body">
             <h5 className="card-title">See Picked Cases<br></br><br></br></h5>
             <p className="card-text">Click below to see the cases you have picked</p>
-            <button className="btn btn-success">
+            <Link to="/lawyer-picked-case-view"  className="btn btn-success">
               <FaClipboardList className="mr-2" />
               Picked Cases
-            </button>
+            </Link>
           </div>
         </div>
 

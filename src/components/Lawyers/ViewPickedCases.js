@@ -10,10 +10,8 @@ var arraylist = [];
 var whole = [];
 var CaseIds = [];
 
-function ViewCases(props) {
+function ViewPickedCases(props) {
   const [cases, setCases] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [w, setw] = useState([]);
   async function getAllproducts() {
     try {
       const { ethereum } = window;
@@ -31,11 +29,7 @@ function ViewCases(props) {
         for (var i = 0; i < arraylist.length; i++) {
           whole[i] = arraylist[i];
         }
-        setw(whole);
         setCases(whole);
-        setFilteredProducts(whole);
-        //console.log("### Ether Cases Data : ", whole);
-        //console.log("caseIDS:", CaseIds);
       }
     } catch (error) {
       console.error(error);
@@ -48,18 +42,29 @@ function ViewCases(props) {
 
   return (
     <>
-      <DashboardHeading text={"View Cases"} />
+      <DashboardHeading text={"Your Cases"} />
       <div className="container mt-4" style={{ marginBottom: "30%" }}>
-  <div className="row">
-    {cases.map((caseData, index) => ( // Added index parameter to map function
-      <div key={caseData.id} className="col-md-4">
-        <CaseCard showclose={false} showtake={true} isclient={false} setcurrentCase={props.setcurrentCase} caseData={caseData} CaseId={CaseIds[index]} userDetails={props.userDetails}/> {/* Passing CaseId using index */}
+      <div className="row">
+      {cases
+        .filter(caseData => caseData.lawyerDetails.split("_")[1] === props.userDetails[1])
+        .map((caseData, index) => (
+          <div key={caseData.id} className="col-md-4">
+            <CaseCard
+              isclient={false}
+              showtake={false}
+              showclose={true}
+              setcurrentCase={props.setcurrentCase}
+              caseData={caseData}
+              CaseId={CaseIds[index]}
+              userDetails={props.userDetails}
+            />
+          </div>
+        ))}
+    </div>
+    
       </div>
-    ))}
-  </div>
-</div>
     </>
   );
 }
 
-export default ViewCases;
+export default ViewPickedCases;

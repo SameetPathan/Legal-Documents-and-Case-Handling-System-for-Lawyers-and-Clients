@@ -28,7 +28,20 @@ function ClientHome() {
             </div>
           </div>
         </div>
+
         <div className="col-md-6">
+        <div className="card">
+          <div className="card-body">
+            <h5 className="card-title">Check Case Status</h5>
+            <p className="card-text">Click below to check the status of your case</p>
+            <Link to="/client-case-status" className="btn btn-primary">
+            <FaCheck className="mr-2" />
+            Case status
+              </Link>
+          </div>
+        </div>
+      </div>
+       {/* <div className="col-md-6">
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Add Documents</h5>
@@ -41,9 +54,11 @@ function ClientHome() {
             </div>
           </div>
         </div>
+  */}
+        
       </div>
 
-
+     {/*
       <div className="row mt-4">
         <div className="col-md-6">
           <div className="card">
@@ -71,6 +86,8 @@ function ClientHome() {
           </div>
         </div>
       </div>
+
+    */}
     </div>
     </>
   );

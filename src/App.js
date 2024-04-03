@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,6 +20,11 @@ import ViewCases from './components/Lawyers/ViewCases';
 import AddDocuments from './components/Clients/AddDocuments';
 import ViewDocuments from './components/Clients/ViewDocuments';
 import UserProfileForm from './components/UserProfileForm';
+import CaseView from './components/Clients/CaseView';
+import ChatComponent from './components/Chats';
+import { ethers } from "ethers";
+import { profileABI, profileAddress } from './components/contractAddress';
+import ViewPickedCases from './components/Lawyers/ViewPickedCases';
 
 
 
@@ -29,6 +34,46 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [currentBalance, setCurrentBalanace] = useState(null);
   const [userDetails, setuserDetails] = useState([]);
+  const [account, setAccount] = useState(null);
+  const [currentCase, setcurrentCase] = useState([]);
+
+  const handleGetProfile = async (e) => {
+    try {
+      const { ethereum } = window;
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      setAccount(accounts[0]);
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+
+        const ProfileContract = new ethers.Contract(
+          profileAddress,
+          profileABI,
+          signer
+        );
+
+        const isprofile = await ProfileContract.userExists(accounts[0]);
+
+        if(isprofile){
+          const profile = await ProfileContract.getProfileById(accounts[0]);
+          setuserDetails(profile)
+          //setUserProfile(profile);
+        }else{
+          //setUserProfile([]);
+        }
+        
+        
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetProfile();
+  
+  }, []);
 
   return <>
   <div>
@@ -49,16 +94,18 @@ function App() {
                
                  <Route exact path='/' element={ <UserHandler setuserDetails={setuserDetails} userDetails={userDetails}></UserHandler>}></Route>
                  <Route exact path='/profile' element={<UserProfileForm ></UserProfileForm>}></Route>
-                 <Route exact path='/client' element={ <ClientHome></ClientHome>}></Route>
+                 <Route exact path='/client' element={ <ClientHome ></ClientHome>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
                  <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>
-                 <Route exact path='/client-add-case' element={<AddCaseForm></AddCaseForm>}></Route>
-                 <Route exact path='/lawyer-case-view' element={<ViewCases></ViewCases>}></Route>
+                 <Route exact path='/client-add-case' element={<AddCaseForm userDetails={userDetails}> </AddCaseForm>}></Route>
+                 <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails}></CaseView>}></Route>
+                 <Route exact path='/lawyer-case-view' element={<ViewCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewCases>}></Route>
+                 <Route exact path='/lawyer-picked-case-view' element={<ViewPickedCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewPickedCases>}></Route>
                  <Route exact path='/client-add-document' element={<AddDocuments></AddDocuments>}></Route>
                  <Route exact path='/client-view-document' element={<ViewDocuments userId={"sameet"} userType={"normal"}></ViewDocuments>}></Route>
-            
-             
-         
+
+                 <Route exact path='/chat' element={<ChatComponent userDetails={userDetails} currentCase={currentCase}></ChatComponent>}></Route>
+
               </Routes>
             </div>
           

@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { getDatabase, ref as rtdbRef, onValue } from "firebase/database";
 import { app } from "../../firebaseConfig";
@@ -10,7 +11,7 @@ var arraylist = [];
 var whole = [];
 var CaseIds = [];
 
-function ViewCases(props) {
+function CaseView(props) {
   const [cases, setCases] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [w, setw] = useState([]);
@@ -48,18 +49,36 @@ function ViewCases(props) {
 
   return (
     <>
-      <DashboardHeading text={"View Cases"} />
-      <div className="container mt-4" style={{ marginBottom: "30%" }}>
-  <div className="row">
-    {cases.map((caseData, index) => ( // Added index parameter to map function
-      <div key={caseData.id} className="col-md-4">
-        <CaseCard showclose={false} showtake={true} isclient={false} setcurrentCase={props.setcurrentCase} caseData={caseData} CaseId={CaseIds[index]} userDetails={props.userDetails}/> {/* Passing CaseId using index */}
+      <DashboardHeading text={"Your Cases"} />
+
+      <div className="container-fluid mt-4 p-5" style={{ marginBottom: "30%" }}>
+        <div className="row">
+          {cases
+            .filter(caseData => caseData.fullNameAndPhoneNumber.split("_")[1] === props.userDetails[1])
+            .map(
+            (
+              caseData,
+              index // Added index parameter to map function
+            ) => (
+              <div key={caseData.id} className="col-md-4">
+                <CaseCard
+                  isclient={true}
+                  setcurrentCase={props.setcurrentCase}
+                  caseData={caseData}
+                  CaseId={CaseIds[index]}
+                  userDetails={props.userDetails}
+                />{" "}
+                {/* Passing CaseId using index */}
+                <strong>
+                  <hr />
+                </strong>
+              </div>
+            )
+          )}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
     </>
   );
 }
 
-export default ViewCases;
+export default CaseView;

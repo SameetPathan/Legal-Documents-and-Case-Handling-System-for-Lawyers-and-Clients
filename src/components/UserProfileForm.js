@@ -219,7 +219,6 @@ const UserProfileForm = () => {
               >
                 <option value="lawyer">Lawyer</option>
                 <option value="client">Client</option>
-                <option value="admin" className="text-danger">Admin (Dev Mode)</option>
                 <option value="master" className="text-danger">Master (Dev Mode)</option>
               </Form.Control>
             </Col>

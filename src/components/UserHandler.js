@@ -90,20 +90,7 @@ const UserHandler = (props) => {
           Welcome to Lawyer Dashboard
         </Link>
         );
-      case "admin":
-        return (
-          <Link
-          to="/admin"
-          className={`btn btn-${
-            selectedType === "admin" ? "primary" : "outline-primary"
-          } m-2`}
-          onClick={() => handleUserTypeSelection("admin")}
-        >
-          <FaGavel size={40} className="mb-2" />
-          <br />
-          Admin
-        </Link>
-        );
+   
       case "master":
         return(
           <>
@@ -129,6 +116,7 @@ const UserHandler = (props) => {
         <br />
         Welcome to Lawyer Dashboard
       </Link>
+      {/*
       <Link
       to="/admin"
       className={`btn btn-${
@@ -139,7 +127,7 @@ const UserHandler = (props) => {
       <FaGavel size={40} className="mb-2" />
       <br />
       Welcome to Admin Dashboard
-    </Link>
+    </Link>*/}
 
           </>
         );
