@@ -49,7 +49,7 @@ function ViewCases(props) {
   return (
     <>
       <DashboardHeading text={"View Cases"} />
-      <div className="container mt-4" style={{ marginBottom: "30%" }}>
+      <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
   <div className="row">
     {cases.map((caseData, index) => ( // Added index parameter to map function
       <div key={caseData.id} className="col-md-4">

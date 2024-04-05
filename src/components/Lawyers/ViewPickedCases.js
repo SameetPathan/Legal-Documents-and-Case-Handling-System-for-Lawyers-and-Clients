@@ -43,7 +43,7 @@ function ViewPickedCases(props) {
   return (
     <>
       <DashboardHeading text={"Your Cases"} />
-      <div className="container mt-4" style={{ marginBottom: "30%" }}>
+      <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
       <div className="row">
       {cases
         .filter(caseData => caseData.lawyerDetails.split("_")[1] === props.userDetails[1])
@@ -57,6 +57,7 @@ function ViewPickedCases(props) {
               caseData={caseData}
               CaseId={CaseIds[index]}
               userDetails={props.userDetails}
+              showchat={true}
             />
           </div>
         ))}

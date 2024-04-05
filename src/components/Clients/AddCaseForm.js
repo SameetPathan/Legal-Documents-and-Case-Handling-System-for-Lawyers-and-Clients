@@ -15,9 +15,9 @@ import { casesABI, casesAddress } from "../contractAddress";
 
 function AddCaseForm(props) {
   const [formData, setFormData] = useState({
-    fullName: "",
-    currentAddress: "",
-    phoneNumber: "",
+    fullName: props.userDetails[0],
+    currentAddress: props.userDetails[3],
+    phoneNumber: props.userDetails[1],
     caseTitle: "",
     caseDescription: "",
     caseType: "",
@@ -30,7 +30,7 @@ function AddCaseForm(props) {
     status: "Submiited",
     lawyerDetails: "",
     lawyerAddress: "",
-    paymentStatus: 0,
+    paymentStatus: "0_0",
   });
   const [account, setAccount] = useState(null);
 
@@ -89,7 +89,7 @@ function AddCaseForm(props) {
         await txn.wait();
         console.log(`Mined`);
         toast.success("Case saved successfully.");
-
+        window.history.back();
         
       setFormData({
         fullName: '',
@@ -104,7 +104,7 @@ function AddCaseForm(props) {
         searchReport: null,
         copyOfFIR: null,
         charsheetWithStatementOfWitnesses: null,
-        status: 'Pending Verification',
+        status: 'Submiited',
       });
       } else {
         toast.error(
@@ -177,14 +177,18 @@ function AddCaseForm(props) {
       // Push the new case data to the Realtime Database
      // const newCaseRef = push(casesRef);
       //set(newCaseRef, updatedFormData);
-      let caseId = "243434545243343"
+      let caseId = '';
+      for (let i = 0; i < 10; i++) {
+        caseId += Math.floor(Math.random() * 10);
+      }
+
       handleAddSubmit(
         caseId,
         formData.fullName + "_" + formData.phoneNumber,
         formData.currentAddress,
         formData.caseTitle + "_" + formData.caseDescription,
         fileUrls,
-        "Pending Verification",
+        "Submiited",
         formData.caseType,
         formData.copyOfFIR,
         formData.lawyerDetails,
@@ -216,7 +220,7 @@ function AddCaseForm(props) {
               className="form-control"
               id="fullName"
               name="fullName"
-              value={props.userDetails[0]?props.userDetails[0]:formData.fullName}
+              value={formData.fullName}
               onChange={handleInputChange}
               required
             />
@@ -228,7 +232,7 @@ function AddCaseForm(props) {
               className="form-control"
               id="currentAddress"
               name="currentAddress"
-              value={props.userDetails[3]?props.userDetails[3]:formData.currentAddress}
+              value={formData.currentAddress}
               onChange={handleInputChange}
               required
             />
@@ -241,7 +245,7 @@ function AddCaseForm(props) {
               className="form-control"
               id="phoneNumber"
               name="phoneNumber"
-              value={props.userDetails[1]?props.userDetails[1]:formData.phoneNumber}
+              value={formData.phoneNumber}
               onChange={handleInputChange}
               required
             />

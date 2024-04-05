@@ -8,7 +8,7 @@ import {
   FaPhone,
   FaBriefcase,
   FaRegFileAlt,
-  FaSnapchat
+  FaSnapchat,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
@@ -19,25 +19,79 @@ import { casesABI, casesAddress } from "./contractAddress";
 import { toast } from "react-toastify";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake,showclose}) {
+function CaseCard({
+  isclient,
+  caseData,
+  CaseId,
+  userDetails,
+  setcurrentCase,
+  showtake,
+  showclose,
+  showchat,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    lawyerName: "Aditya Malu",
-    lawyerPhoneNumber: "8486871126",
-    lawyerAddress: "Sangli",
+    lawyerName: userDetails[0],
+    lawyerPhoneNumber: userDetails[1],
+    lawyerAddress: userDetails[3],
   });
 
   const [account, setAccount] = useState(null);
 
+  const [amount, setAmount] = useState("");
+
+  const handleAmountChange = (event) => {
+    setAmount(event.target.value);
+  };
+
   const handleModalShow = () => setShowModal(true);
   const handleModalClose = () => setShowModal(false);
 
-
-  const handleClosecase = () => {
-    alert("case closed")
+  const handleClosecase = (caseId) => {
+    handleUpdateCasepayment(caseId);
   };
 
-  
+  const handleUpdateCasepayment = async (caseId) => {
+    debugger
+    const { ethereum } = window;
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+    setAccount(accounts[0]);
+
+    try {
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const caseContract = new ethers.Contract(
+          casesAddress,
+          casesABI,
+          signer
+        );
+        let txn;
+        let paymentdetails = amount + "_0";
+        txn = await caseContract.updatePaymentStatus(caseId, paymentdetails);
+        console.log("Mining... please wait");
+        await txn.wait();
+        console.log(`Mined`);
+        toast.success("Case closed and payment iniated successfully.");
+
+        // let txn2 = await caseContract.updateCaseStatus(caseId, "Taken");
+        // await txn2.wait();
+
+        // toast.success("Case Status updated.");
+        window.history.back();
+      } else {
+        toast.error(
+          "Error While taking Case. Please check your MetaMask connection."
+        );
+        console.log(`Error`);
+      }
+    } catch (err) {
+      toast.error(
+        "Error While taking Case. Please check your MetaMask connection."
+      );
+      console.log(err);
+    }
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -73,14 +127,11 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
         console.log(`Mined`);
         toast.success("Case taken successfully.");
 
-        let txn2 = await caseContract.updateCaseStatus(
-          caseId,
-          "Taken"
-        );
+        let txn2 = await caseContract.updateCaseStatus(caseId, "Taken");
         await txn2.wait();
 
         toast.success("Case Status updated.");
-
+        window.history.back();
       } else {
         toast.error(
           "Error While taking Case. Please check your MetaMask connection."
@@ -96,7 +147,7 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
   };
 
   const handleUpdateCase = async (caseId) => {
-    handleUpdateCaseSubmit(caseId)
+    handleUpdateCaseSubmit(caseId);
     handleModalClose();
     setFormData({
       lawyerName: "",
@@ -116,20 +167,18 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
 
   return (
     <div className="card mb-4 shadow-sm">
-    <div className="card-header bg-primary text-white d-flex justify-content-between">
-    <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
-    <span>
-      <Link to="/chat"
-      onClick={() => setcurrentCasehandle(CaseId)}>
-      
-        <FaSnapchat style={{ color: 'white' }} />
-      </Link>
-    </span>
-  </div>
+      <div className="card-header bg-primary text-white d-flex justify-content-between">
+        <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
+        {showchat && (
+          <span>
+            <Link to="/chat" onClick={() => setcurrentCasehandle(CaseId)}>
+              <FaSnapchat style={{ color: "white" }} />
+            </Link>
+          </span>
+        )}
+      </div>
 
-      <div className="card-body" style={{ height: "630px" }}>
-
-      
+      <div className="card-body" style={{ height: "auto" }}>
         <ul className="list-unstyled mb-0">
           <li className="mb-2">
             <FaUser className="mr-2" />
@@ -243,43 +292,104 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
         </ul>
 
         <hr></hr>
-        <p style={{fontWeight:"bold"}}>Lawyer Details</p>
-        <hr></hr>
+        {caseData.lawyerDetails.split("_")[1] === "" ||
+          !isclient ||
+          showtake || (
+            <>
+              <p style={{ fontWeight: "bold" }}>Lawyer Details</p>
+              <hr></hr>
 
-        <li className="mb-2">
-            <FaUser className="mr-2" />
-            <strong>Name:</strong>{" "}
-            {caseData.lawyerDetails.split("_")[0]}
-          </li>
+              <li className="mb-2">
+                <FaUser className="mr-2" />
+                <strong>Name:</strong> {caseData.lawyerDetails.split("_")[0]}
+              </li>
 
-          <li className="mb-2">
-            <FaUser className="mr-2" />
-            <strong>Phone Number:</strong>{" "}
-            {caseData.lawyerDetails.split("_")[1]}
-          </li>
+              <li className="mb-2">
+                <FaUser className="mr-2" />
+                <strong>Phone Number:</strong>{" "}
+                {caseData.lawyerDetails.split("_")[1]}
+              </li>
 
-          <li className="mb-2">
-            <FaUser className="mr-2" />
-            <strong>Address:</strong>{" "}
-            {caseData.lawyerAddress}
-          </li>
+              <li className="mb-2">
+                <FaUser className="mr-2" />
+                <strong>Address:</strong> {caseData.lawyerAddress}
+              </li>
+            </>
+          )}
       </div>
 
-      {!isclient && showtake && (
-      <div className="card-footer">
-        <Button variant="primary" onClick={handleModalShow}>
-          Take Case
-        </Button>
-      </div>
-  )}
+      {!isclient && showtake && caseData.lawyerDetails === "" && (
+        <div className="card-footer">
+          <Button variant="primary" onClick={handleModalShow}>
+            Take Case
+          </Button>
+        </div>
+      )}
 
-  {showclose && (
-    <div className="card-footer">
-      <Button variant="success" onClick={handleClosecase}>
-        Close case
-      </Button>
-    </div>
-)}
+      {isclient && caseData.paymentStatus.split("_")[1]==="1" && (
+      <div class="alert alert-success" role="alert">
+ Payment of {caseData.paymentStatus.split("_")[0]} ETH Done and Case Closed
+</div>
+      
+      )}
+
+      {isclient && caseData.paymentStatus.split("_")[1]==="0" &&
+        <div className="card-footer d-flex justify-content-between align-items-center">
+          <div>
+            <Button variant="success" onClick={() => handleClosecase(CaseId)}>
+              Pay and close Case
+            </Button>
+          </div>
+          <div className="input-group flex-nowrap" style={{ width: "300px" }}>
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="addon-wrapping">
+                Eth
+              </span>
+            </div>
+            <input
+              type="number"
+              className="form-control"
+              disabled={true}
+              value={caseData.paymentStatus.split("_")[0]}
+              onChange={handleAmountChange}
+              placeholder="Enter in Wai"
+              aria-label="Eth"
+              aria-describedby="addon-wrapping"
+            />{" "}
+          </div>
+        </div>
+
+      }
+
+      {showclose && caseData.paymentStatus.split("_")[1]==="0" ? (
+        <div className="card-footer d-flex justify-content-between align-items-center">
+          <div>
+            <Button variant="success" disabled={amount===""} onClick={() => handleClosecase(CaseId)}>
+              Close case
+            </Button>
+          </div>
+          <div className="input-group flex-nowrap" style={{ width: "300px" }}>
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="addon-wrapping">
+                Eth
+              </span>
+            </div>
+            <input
+              type="number"
+              className="form-control"
+              value={amount}
+              onChange={handleAmountChange}
+              placeholder="Enter in Wai"
+              aria-label="Eth"
+              aria-describedby="addon-wrapping"
+            />{" "}
+          </div>
+        </div>
+      ):(
+        <div class="alert alert-success" role="alert">
+          Payment of {caseData.paymentStatus.split("_")[0]} ETH Received and Case Closed
+          </div>
+      )}
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
@@ -292,7 +402,7 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
               <Form.Control
                 type="text"
                 name="lawyerName"
-                value={userDetails[0]?userDetails[0]:formData.lawyerName}
+                value={formData.lawyerName}
                 onChange={handleInputChange}
               />
             </Form.Group>
@@ -302,7 +412,7 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
               <Form.Control
                 type="text"
                 name="lawyerPhoneNumber"
-                value={userDetails[1]?userDetails[1]:formData.lawyerPhoneNumber}
+                value={formData.lawyerPhoneNumber}
                 onChange={handleInputChange}
               />
             </Form.Group>
@@ -312,27 +422,24 @@ function CaseCard({isclient,caseData, CaseId,userDetails,setcurrentCase,showtake
               <Form.Control
                 type="text"
                 name="lawyerAddress"
-                value={userDetails[3]?userDetails[3]:formData.lawyerAddress}
+                value={formData.lawyerAddress}
                 onChange={handleInputChange}
               />
             </Form.Group>
           </Form>
           <div class="alert alert-primary mt-2" role="alert">
-          Are you sure you have Confirmed submitted Documents ?
-        </div>
+            Are you sure you have Confirmed submitted Documents ?
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
           <Button variant="primary" onClick={() => handleUpdateCase(CaseId)}>
-          Take Case
-        </Button>
+            Take Case
+          </Button>
         </Modal.Footer>
       </Modal>
-
-
-
     </div>
   );
 }
