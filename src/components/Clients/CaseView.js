@@ -67,6 +67,7 @@ function CaseView(props) {
                   caseData={caseData}
                   CaseId={CaseIds[index]}
                   userDetails={props.userDetails}
+                  showchat={true}
                 />{" "}
                 {/* Passing CaseId using index */}
                 <strong>

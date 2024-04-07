@@ -52,7 +52,6 @@ function CaseCard({
   };
 
   const handleUpdateCasepayment = async (caseId) => {
-    debugger
     const { ethereum } = window;
     const accounts = await ethereum.request({ method: "eth_accounts" });
     setAccount(accounts[0]);
@@ -67,12 +66,23 @@ function CaseCard({
           signer
         );
         let txn;
-        let paymentdetails = amount + "_0";
+        let paymentdetails;
+        if(isclient){
+          paymentdetails = caseData.paymentStatus.split("_")[0] + "_1";
+        }else{
+          paymentdetails = amount + "_2";
+        }
+        
         txn = await caseContract.updatePaymentStatus(caseId, paymentdetails);
         console.log("Mining... please wait");
         await txn.wait();
         console.log(`Mined`);
-        toast.success("Case closed and payment iniated successfully.");
+
+        if(isclient){
+        toast.success("Case closed and payment completed successfully.");
+        }else{
+          toast.success("Case payment iniated successfully.");
+        }
 
         // let txn2 = await caseContract.updateCaseStatus(caseId, "Taken");
         // await txn2.wait();
@@ -120,15 +130,16 @@ function CaseCard({
         txn = await caseContract.updateLawyerDetails(
           caseId,
           lawyerDetails,
-          formData.lawyerAddress
+          formData.lawyerAddress,
+          "Taken"
         );
         console.log("Mining... please wait");
         await txn.wait();
         console.log(`Mined`);
         toast.success("Case taken successfully.");
 
-        let txn2 = await caseContract.updateCaseStatus(caseId, "Taken");
-        await txn2.wait();
+        //let txn2 = await caseContract.updateCaseStatus(caseId, "Taken");
+        //await txn2.wait();
 
         toast.success("Case Status updated.");
         window.history.back();
@@ -162,12 +173,12 @@ function CaseCard({
   };
 
   useEffect(() => {
-    //console.log("### caseData Details:", caseData);
+    console.log("### caseData Details:", caseData);
   });
 
   return (
     <div className="card mb-4 shadow-sm">
-      <div className="card-header bg-primary text-white d-flex justify-content-between">
+      <div className="card-header bg-dark text-white d-flex justify-content-between">
         <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
         {showchat && (
           <span>
@@ -287,7 +298,7 @@ function CaseCard({
 
           <li className="mb-2">
             <FaCheck className="text-success mr-2" />
-            <strong>Status:</strong> {caseData.status}
+            <strong>Status:</strong> {caseData.paymentStatus.split("_")[1]==="1" ?"Closed":caseData.status}
           </li>
         </ul>
 
@@ -333,7 +344,7 @@ function CaseCard({
       
       )}
 
-      {isclient && caseData.paymentStatus.split("_")[1]==="0" &&
+      {isclient && caseData.paymentStatus.split("_")[1]==="2" &&
         <div className="card-footer d-flex justify-content-between align-items-center">
           <div>
             <Button variant="success" onClick={() => handleClosecase(CaseId)}>
@@ -361,7 +372,7 @@ function CaseCard({
 
       }
 
-      {showclose && caseData.paymentStatus.split("_")[1]==="0" ? (
+      {showclose && caseData.paymentStatus.split("_")[1]==="3" && (
         <div className="card-footer d-flex justify-content-between align-items-center">
           <div>
             <Button variant="success" disabled={amount===""} onClick={() => handleClosecase(CaseId)}>
@@ -385,11 +396,23 @@ function CaseCard({
             />{" "}
           </div>
         </div>
-      ):(
-        <div class="alert alert-success" role="alert">
-          Payment of {caseData.paymentStatus.split("_")[0]} ETH Received and Case Closed
-          </div>
       )}
+
+      {caseData.paymentStatus.split("_")[1]==="2" &&
+        (
+          <div class="alert alert-success" role="alert">
+            Payment of {caseData.paymentStatus.split("_")[0]} ETH iniated.  
+            </div>
+        )
+      }
+
+      {!isclient && caseData.paymentStatus.split("_")[1]==="1" &&
+        (
+          <div class="alert alert-success" role="alert">
+            Payment of {caseData.paymentStatus.split("_")[0]} ETH Received and Case Closed  
+            </div>
+        )
+      }
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>

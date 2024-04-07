@@ -136,8 +136,8 @@ const UserProfileForm = () => {
   return (
     <>
       <DashboardHeading text={"Add Profile"}></DashboardHeading>
-      <Container className="mt-5">
-        <Form onSubmit={handleSubmit}>
+      <Container className="mt-5 card">
+        <Form onSubmit={handleSubmit} className="card-body">
           <Form.Group as={Row} className="mb-3" controlId="formFullName">
             <Form.Label column sm={2}>
               Full Name

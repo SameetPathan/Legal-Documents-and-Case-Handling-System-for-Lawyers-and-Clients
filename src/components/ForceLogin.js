@@ -22,12 +22,14 @@ function ForceLogin() {
 
   return (
     <>
-      <div className="home-page">
+      <div className="home-page" >
         <img
           className="bg-img"
-          src={process.env.PUBLIC_URL + "/bg2.jpg"}
+          src={process.env.PUBLIC_URL + "/img1.jpg"}
           alt="Background"
           style={{
+
+
             width: "100%",
             height: "700px",
             objectFit: "cover",

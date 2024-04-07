@@ -27,10 +27,10 @@ function AddCaseForm(props) {
     searchReport: null,
     copyOfFIR: null,
     charsheetWithStatementOfWitnesses: null,
-    status: "Submiited",
+    status: "Submitted",
     lawyerDetails: "",
     lawyerAddress: "",
-    paymentStatus: "0_0",
+    paymentStatus: "0_3",  // 0 payment _ status 3 inita
   });
   const [account, setAccount] = useState(null);
 
@@ -104,7 +104,7 @@ function AddCaseForm(props) {
         searchReport: null,
         copyOfFIR: null,
         charsheetWithStatementOfWitnesses: null,
-        status: 'Submiited',
+        status: 'Submitted',
       });
       } else {
         toast.error(
@@ -188,7 +188,7 @@ function AddCaseForm(props) {
         formData.currentAddress,
         formData.caseTitle + "_" + formData.caseDescription,
         fileUrls,
-        "Submiited",
+        "Submitted",
         formData.caseType,
         formData.copyOfFIR,
         formData.lawyerDetails,
@@ -206,12 +206,14 @@ function AddCaseForm(props) {
 
   useEffect(() => {
     console.log("### userDetails:", props.userDetails);
+    console.log("### CaseId:", props.CaseId);
   });
 
   return (
     <>
       <DashboardHeading text={"Add Case"} />
-      <div className="container mt-4" style={{ marginBottom: "100px" }}>
+      <div className="container mt-4 card" style={{ marginBottom: "100px" }}>
+      <div className="card-body">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="fullName">Full Name</label>
@@ -375,6 +377,7 @@ function AddCaseForm(props) {
             Submit Case
           </button>
         </form>
+        </div>
       </div>
     </>
   );

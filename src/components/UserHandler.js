@@ -64,58 +64,92 @@ const UserHandler = (props) => {
     switch (userType) {
       case "client":
         return (
+          <div class="card">
+<div class="card-body" style={{width:"350px"}}>
           <Link
           to="/client"
           className={`btn btn-${
-            selectedType === "client" ? "success" : "outline-success"
+            selectedType === "client" ? "success" : "dark"
           } m-2`}
           onClick={() => handleUserTypeSelection("client")}
         >
           <FaUser size={40} className="mb-2" />
-          <br />
-          Welcome to Client Dashboard
+          <br /> <br></br> 
+          Welcome to Client Dashboard <br></br> <br></br> <br></br>
+       
+          <p>
+           Here, you can manage your cases, track their status, make payments, and upload documents.
+        </p>
         </Link>
+        </div>
+        </div>
         );
       case "lawyer":
         return (
+          <div class="card ml-3">
+<div class="card-body" style={{width:"350px"}}>
           <Link
           to="/lawyer"
           className={`btn btn-${
-            selectedType === "lawyer" ? "primary" : "outline-primary"
+            selectedType === "lawyer" ? "primary" : "dark"
           } m-2`}
           onClick={() => handleUserTypeSelection("lawyer")}
         >
           <FaGavel size={40} className="mb-2" />
-          <br />
+          <br /> <br></br> 
           Welcome to Lawyer Dashboard
+          <br></br> <br></br> <br></br>
+          <p>
+  Here, you can view cases assigned to you, take new cases, check documents related to cases.
+</p>
         </Link>
+        </div>
+        </div>
         );
+        
    
       case "master":
         return(
           <>
-          <Link
-          to="/client"
-          className={`btn btn-${
-            selectedType === "client" ? "success" : "outline-success"
-          } m-2`}
-          onClick={() => handleUserTypeSelection("client")}
-        >
-          <FaUser size={40} className="mb-2" />
-          <br />
-          Welcome to Client Dashboard
-        </Link>
+
+          <div class="card">
+  <div class="card-body" style={{width:"350px"}}>
+  <Link
+  to="/client"
+  className={`btn btn-${
+    selectedType === "client" ? "success" : "dark"
+  } m-2`}
+  onClick={() => handleUserTypeSelection("client")}
+>
+  <FaUser size={40} className="mb-2" />
+  <br /> <br></br> 
+  Welcome to Client Dashboard <br></br> <br></br> <br></br>
+  <p>
+ Here, you can manage your cases, track their status, make payments, and upload documents.
+</p>
+</Link>
+  </div>
+</div>
+
+<div class="card ml-3">
+<div class="card-body" style={{width:"350px"}}>
+       
         <Link
         to="/lawyer"
         className={`btn btn-${
-          selectedType === "lawyer" ? "primary" : "outline-primary"
+          selectedType === "lawyer" ? "primary" : "dark"
         } m-2`}
         onClick={() => handleUserTypeSelection("lawyer")}
       >
         <FaGavel size={40} className="mb-2" />
-        <br />
-        Welcome to Lawyer Dashboard
+        <br /> <br></br> 
+        Welcome to Lawyer Dashboard<br></br> <br></br> <br></br>
+        <p>
+  Here, you can view cases assigned to you, take new cases, check documents related to cases.
+</p>
       </Link>
+      </div>
+      </div>
       {/*
       <Link
       to="/admin"
@@ -133,6 +167,8 @@ const UserHandler = (props) => {
         );
       default:
         return (
+          <div class="card">
+<div class="card-body" style={{width:"350px"}}>
           <Link
           to="/client"
           className={`btn btn-${
@@ -141,9 +177,16 @@ const UserHandler = (props) => {
           onClick={() => handleUserTypeSelection("client")}
         >
           <FaUser size={40} className="mb-2" />
-          <br />
-          Welcome to Client Dashboard
+          <br /> <br></br> 
+          Welcome to Client Dashboard<br></br> <br></br> <br></br>
+
+          <p>
+          Here, you can manage your cases, track their status, make payments, and upload documents.
+        </p>
+          
         </Link>
+        </div>
+        </div>
         );
     }
   };

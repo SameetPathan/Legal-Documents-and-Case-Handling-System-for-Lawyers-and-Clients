@@ -302,71 +302,8 @@ export const profileABI = [
 
 
 //export const casesAddress = "0xC68701E6DB7a76f8CAbC24aD2Fc29D2742d28115"; // for testing
-export const casesAddress = "0x86A0Eb12877706D4D90767681D9274a658a5642b";// "0x63a377cD41419e8f95aDd36d13c1EB450232ff26";
+export const casesAddress = "0xF39C2E71b8825B87F9c44Ff4B453ace32230335C";// "0x63a377cD41419e8f95aDd36d13c1EB450232ff26";
 export const casesABI =[
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_caseId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_fullNameAndPhoneNumber",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_currentAddress",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_titleDescription",
-				"type": "string"
-			},
-			{
-				"internalType": "string[]",
-				"name": "_documents",
-				"type": "string[]"
-			},
-			{
-				"internalType": "string",
-				"name": "_status",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_caseType",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_copyOfFIR",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_lawyerDetails",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_lawyerAddress",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_paymentStatus",
-				"type": "string"
-			}
-		],
-		"name": "addCase",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -411,6 +348,12 @@ export const casesABI =[
 				"indexed": false,
 				"internalType": "string",
 				"name": "newLawyerAddress",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "newStatus",
 				"type": "string"
 			},
 			{
@@ -476,52 +419,56 @@ export const casesABI =[
 			},
 			{
 				"internalType": "string",
-				"name": "_newStatus",
-				"type": "string"
-			}
-		],
-		"name": "updateCaseStatus",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_caseId",
+				"name": "_fullNameAndPhoneNumber",
 				"type": "string"
 			},
 			{
 				"internalType": "string",
-				"name": "_newLawyerDetails",
+				"name": "_currentAddress",
 				"type": "string"
 			},
 			{
 				"internalType": "string",
-				"name": "_newLawyerAddress",
+				"name": "_titleDescription",
 				"type": "string"
-			}
-		],
-		"name": "updateLawyerDetails",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+			},
+			{
+				"internalType": "string[]",
+				"name": "_documents",
+				"type": "string[]"
+			},
 			{
 				"internalType": "string",
-				"name": "_caseId",
+				"name": "_status",
 				"type": "string"
 			},
 			{
 				"internalType": "string",
-				"name": "_newPaymentStatus",
+				"name": "_caseType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_copyOfFIR",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lawyerDetails",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lawyerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_paymentStatus",
 				"type": "string"
 			}
 		],
-		"name": "updatePaymentStatus",
+		"name": "addCase",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -680,6 +627,70 @@ export const casesABI =[
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_caseId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newStatus",
+				"type": "string"
+			}
+		],
+		"name": "updateCaseStatus",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_caseId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newLawyerDetails",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newLawyerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newStatus",
+				"type": "string"
+			}
+		],
+		"name": "updateLawyerDetails",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_caseId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newPaymentStatus",
+				"type": "string"
+			}
+		],
+		"name": "updatePaymentStatus",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ];

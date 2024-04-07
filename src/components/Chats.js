@@ -24,10 +24,11 @@ function ChatComponent(props) {
   
     const handleSubmit = (e) => {
       let name = props.userDetails[0];
+      let type = props.userDetails[4];
       e.preventDefault();
       const db = getDatabase();
       const messageRef = push(ref(db,  "messages/"+props.currentCase));
-      set(messageRef, { name, message });
+      set(messageRef, { name, message,type});
       setMessage("");
     };
 
@@ -57,7 +58,8 @@ function ChatComponent(props) {
           <button
             style={{ marginLeft: "150px" }}
             type="button"
-            className="btn btn-success"
+            className={`btn ${message.type === "client" ? 'btn-success' : 'btn-primary'}`}
+         
             data-toggle="modal"
             data-target="#exampleModal2"
             data-whatever="@getbootstrap"
@@ -73,19 +75,21 @@ function ChatComponent(props) {
         {messages.map((message, index) => (
           <li
             key={message.id}
-            className={index % 2 === 0 ? "left" : "right"}
+            className={message.type === "client" ? "left" : "right"}
           >
 
             <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <h2 style={{fontSize:"16px"}}>{message.name} : </h2>&nbsp;&nbsp;&nbsp;
-                <h2 class="breadcrumb-item active"  style={{fontSize:"14px"}}> {message.message}</h2>
+              <ol className={`breadcrumb ${message.type === "client" ? 'bg-success' : 'bg-primary'}`}>
+                <h2 style={{fontSize:"16px",color:"black"}}>{message.name} : </h2>&nbsp;&nbsp;&nbsp;
+                <h2 class="breadcrumb-item active"  style={{fontSize:"14px",color:"white"}}> {message.message}</h2>
+               
               </ol>
             </nav>
           </li>
         ))}
       </ul>
         </div>
+
         <div class="card-footer " style={{backgroundColor:"#051922",color:"white"}}>
           Connecting Lawyer and Client
         </div>

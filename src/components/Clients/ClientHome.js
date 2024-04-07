@@ -21,7 +21,7 @@ function ClientHome() {
             <div className="card-body">
               <h5 className="card-title">Add Case</h5>
               <p className="card-text">Click below to add a new case</p>
-              <Link to="/client-add-case" className="btn btn-primary">
+              <Link to="/client-add-case" className="btn btn-dark">
                 <FaPlus className="mr-2" />
                 Add Case
               </Link>
@@ -34,7 +34,7 @@ function ClientHome() {
           <div className="card-body">
             <h5 className="card-title">Check Case Status</h5>
             <p className="card-text">Click below to check the status of your case</p>
-            <Link to="/client-case-status" className="btn btn-primary">
+            <Link to="/client-case-status" className="btn btn-dark">
             <FaCheck className="mr-2" />
             Case status
               </Link>
