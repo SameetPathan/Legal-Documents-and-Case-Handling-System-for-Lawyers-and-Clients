@@ -50,10 +50,12 @@ function ViewPickedCases(props) {
         .map((caseData, index) => (
           <div key={caseData.id} className="col-md-4">
             <CaseCard
+              hideSensative={true}
               isclient={false}
               showtake={false}
               showclose={true}
               setcurrentCase={props.setcurrentCase}
+              setcurrentCaseName={props.setcurrentCaseName}
               caseData={caseData}
               CaseId={CaseIds[index]}
               userDetails={props.userDetails}

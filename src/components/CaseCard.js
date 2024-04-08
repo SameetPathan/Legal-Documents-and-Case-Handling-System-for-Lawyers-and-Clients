@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 function CaseCard({
+  hideSensative,
   isclient,
   caseData,
   CaseId,
@@ -28,6 +29,7 @@ function CaseCard({
   showtake,
   showclose,
   showchat,
+  setcurrentCaseName
 }) {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,6 +50,7 @@ function CaseCard({
   const handleModalClose = () => setShowModal(false);
 
   const handleClosecase = (caseId) => {
+    debugger
     handleUpdateCasepayment(caseId);
   };
 
@@ -167,9 +170,9 @@ function CaseCard({
     });
   };
 
-  const setcurrentCasehandle = (CaseId) => {
-    debugger;
+  const setcurrentCasehandle = (CaseId,caseName) => {
     setcurrentCase(CaseId);
+    setcurrentCaseName(caseName);
   };
 
   useEffect(() => {
@@ -180,9 +183,10 @@ function CaseCard({
     <div className="card mb-4 shadow-sm">
       <div className="card-header bg-dark text-white d-flex justify-content-between">
         <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
+        <h6><span>Case ID:- </span>{CaseId}</h6>
         {showchat && (
           <span>
-            <Link to="/chat" onClick={() => setcurrentCasehandle(CaseId)}>
+            <Link to="/chat" onClick={() => setcurrentCasehandle(CaseId,caseData.titleDescription.split("_")[0])}>
               <FaSnapchat style={{ color: "white" }} />
             </Link>
           </span>
@@ -298,11 +302,14 @@ function CaseCard({
 
           <li className="mb-2">
             <FaCheck className="text-success mr-2" />
-            <strong>Status:</strong> {caseData.paymentStatus.split("_")[1]==="1" ?"Closed":caseData.status}
+            <strong title={caseData.paymentStatus}>Status:</strong> {caseData.paymentStatus.split("_")[1]==="1" ?"Closed":caseData.status}
           </li>
         </ul>
 
         <hr></hr>
+        
+    
+
         {caseData.lawyerDetails.split("_")[1] === "" ||
           !isclient ||
           showtake || (
@@ -328,7 +335,7 @@ function CaseCard({
             </>
           )}
       </div>
-
+     
       {!isclient && showtake && caseData.lawyerDetails === "" && (
         <div className="card-footer">
           <Button variant="primary" onClick={handleModalShow}>
@@ -336,7 +343,7 @@ function CaseCard({
           </Button>
         </div>
       )}
-
+      {hideSensative && (<>
       {isclient && caseData.paymentStatus.split("_")[1]==="1" && (
       <div class="alert alert-success" role="alert">
  Payment of {caseData.paymentStatus.split("_")[0]} ETH Done and Case Closed
@@ -413,10 +420,12 @@ function CaseCard({
             </div>
         )
       }
+      </>)}
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Enter Lawyer Information</Modal.Title>
+          <h6><span>Case ID:- </span>{CaseId}</h6>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -424,6 +433,7 @@ function CaseCard({
               <Form.Label>Lawyer Name</Form.Label>
               <Form.Control
                 type="text"
+                disabled={true}
                 name="lawyerName"
                 value={formData.lawyerName}
                 onChange={handleInputChange}
@@ -434,6 +444,7 @@ function CaseCard({
               <Form.Label>Lawyer Phone Number</Form.Label>
               <Form.Control
                 type="text"
+                disabled={true}
                 name="lawyerPhoneNumber"
                 value={formData.lawyerPhoneNumber}
                 onChange={handleInputChange}
@@ -444,6 +455,7 @@ function CaseCard({
               <Form.Label>Lawyer Address</Form.Label>
               <Form.Control
                 type="text"
+                disabled={true}
                 name="lawyerAddress"
                 value={formData.lawyerAddress}
                 onChange={handleInputChange}

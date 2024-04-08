@@ -111,7 +111,7 @@ const UserProfileForm = () => {
           }
           console.log("Mining... please wait");
           await Txn2.wait();
-
+          window.history.back();
           console.log(`Mined`);
           toast.success("Profile saved successfully.");
         } else {
@@ -147,6 +147,7 @@ const UserProfileForm = () => {
                 type="text"
                 placeholder="Enter Full Name"
                 value={fullName}
+             
                 onChange={(e) => setFullName(e.target.value)}
                 required
               />

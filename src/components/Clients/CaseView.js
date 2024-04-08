@@ -62,12 +62,14 @@ function CaseView(props) {
             ) => (
               <div key={caseData.id} className="col-md-4">
                 <CaseCard
+                hideSensative={true}
                   isclient={true}
                   setcurrentCase={props.setcurrentCase}
                   caseData={caseData}
                   CaseId={CaseIds[index]}
                   userDetails={props.userDetails}
                   showchat={true}
+                  setcurrentCaseName={props.setcurrentCaseName}
                 />{" "}
                 {/* Passing CaseId using index */}
                 <strong>

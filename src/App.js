@@ -35,7 +35,8 @@ function App() {
   const [currentBalance, setCurrentBalanace] = useState(null);
   const [userDetails, setuserDetails] = useState([]);
   const [account, setAccount] = useState(null);
-  const [currentCase, setcurrentCase] = useState([]);
+  const [currentCase, setcurrentCase] = useState("");
+  const [currentCaseName, setcurrentCaseName] = useState("");
 
   const handleGetProfile = async (e) => {
     try {
@@ -98,13 +99,13 @@ function App() {
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
                  <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>
                  <Route exact path='/client-add-case' element={<AddCaseForm userDetails={userDetails}> </AddCaseForm>}></Route>
-                 <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails}></CaseView>}></Route>
+                 <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails} setcurrentCaseName={setcurrentCaseName}></CaseView>}></Route>
                  <Route exact path='/lawyer-case-view' element={<ViewCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewCases>}></Route>
-                 <Route exact path='/lawyer-picked-case-view' element={<ViewPickedCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewPickedCases>}></Route>
+                 <Route exact path='/lawyer-picked-case-view' element={<ViewPickedCases setcurrentCase={setcurrentCase} setcurrentCaseName={setcurrentCaseName} userDetails={userDetails}></ViewPickedCases>}></Route>
                  <Route exact path='/client-add-document' element={<AddDocuments></AddDocuments>}></Route>
                  <Route exact path='/client-view-document' element={<ViewDocuments userId={"sameet"} userType={"normal"}></ViewDocuments>}></Route>
 
-                 <Route exact path='/chat' element={<ChatComponent userDetails={userDetails} currentCase={currentCase}></ChatComponent>}></Route>
+                 <Route exact path='/chat' element={<ChatComponent userDetails={userDetails} currentCaseName={currentCaseName} currentCase={currentCase}></ChatComponent>}></Route>
 
               </Routes>
             </div>

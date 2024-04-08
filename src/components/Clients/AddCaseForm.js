@@ -219,6 +219,7 @@ function AddCaseForm(props) {
             <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
+              disabled={true}
               className="form-control"
               id="fullName"
               name="fullName"
@@ -233,6 +234,7 @@ function AddCaseForm(props) {
             <textarea
               className="form-control"
               id="currentAddress"
+              disabled={true}
               name="currentAddress"
               value={formData.currentAddress}
               onChange={handleInputChange}
@@ -246,6 +248,7 @@ function AddCaseForm(props) {
               type="tel"
               className="form-control"
               id="phoneNumber"
+              disabled={true}
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleInputChange}

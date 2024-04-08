@@ -36,6 +36,13 @@ function ChatComponent(props) {
       window.history.back();
     };
 
+    useEffect(() => {
+      if(props.currentCase===""){
+        window.history.back();
+      }
+      
+    }, []);
+
   return (
     <div>
 
@@ -49,12 +56,14 @@ function ChatComponent(props) {
         onClick={handleGoBack}
       >
         <FaArrowLeft className="mr-3" />
-        Chat
+        Chat 
       </button>
-        
+      <span className='ml-3 text-success'>Case Name - </span>{props.currentCaseName}  
+      <span className='ml-3 text-success'>Case Id - </span>{props.currentCase}
         </div>
         {/* Right div */}
         <div>
+      
           <button
             style={{ marginLeft: "150px" }}
             type="button"

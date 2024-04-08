@@ -2,6 +2,7 @@ import React from "react";
 import Login from "./Login";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { FaHome, FaSignInAlt, FaArrowLeft, FaUser } from "react-icons/fa";
+import SideMenu from "./SideMenu";
 
 function Navbar(props) {
   const handleGoBack = () => {
@@ -93,6 +94,8 @@ function Navbar(props) {
             ) : (
               ""
             )}
+
+            
 
             <Login
               setCurrentAccount={props.setCurrentAccount}

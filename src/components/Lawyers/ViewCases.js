@@ -50,14 +50,29 @@ function ViewCases(props) {
     <>
       <DashboardHeading text={"View Cases"} />
       <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
-  <div className="row">
-    {cases.map((caseData, index) => ( // Added index parameter to map function
-      <div key={caseData.id} className="col-md-4">
-        <CaseCard showclose={false} showtake={true} isclient={false} setcurrentCase={props.setcurrentCase} caseData={caseData} CaseId={CaseIds[index]} userDetails={props.userDetails}/> {/* Passing CaseId using index */}
+        <div className="row">
+          {cases.map(
+            (
+              caseData,
+              index 
+            ) => (
+              <div key={caseData.id} className="col-md-4">
+                <CaseCard
+                  hideSensative={false}
+                  showclose={false}
+                  showtake={true}
+                  isclient={false}
+                  setcurrentCase={props.setcurrentCase}
+                  caseData={caseData}
+                  CaseId={CaseIds[index]}
+                  userDetails={props.userDetails}
+                />{" "}
+               
+              </div>
+            )
+          )}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
     </>
   );
 }
