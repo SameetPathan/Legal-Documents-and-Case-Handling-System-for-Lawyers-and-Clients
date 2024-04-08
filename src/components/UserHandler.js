@@ -106,8 +106,6 @@ const UserHandler = (props) => {
         </div>
         </div>
         );
-        
-   
       case "master":
         return(
           <>
@@ -167,23 +165,22 @@ const UserHandler = (props) => {
         );
       default:
         return (
-          <div class="card">
+          <div class="card ml-3">
 <div class="card-body" style={{width:"350px"}}>
           <Link
-          to="/client"
+          to="/profile"
           className={`btn btn-${
-            selectedType === "client" ? "success" : "outline-success"
+            selectedType === "lawyer" ? "primary" : "dark"
           } m-2`}
-          onClick={() => handleUserTypeSelection("client")}
-        >
-          <FaUser size={40} className="mb-2" />
-          <br /> <br></br> 
-          Welcome to Client Dashboard<br></br> <br></br> <br></br>
-
-          <p>
-          Here, you can manage your cases, track their status, make payments, and upload documents.
-        </p>
           
+        >
+          <FaGavel size={40} className="mb-2" />
+          <br /> <br></br> 
+          Welcome to Legal vault
+          <br></br> <br></br> <br></br>
+          <p>
+        Here, you can login as lawyer or Client.
+</p>
         </Link>
         </div>
         </div>

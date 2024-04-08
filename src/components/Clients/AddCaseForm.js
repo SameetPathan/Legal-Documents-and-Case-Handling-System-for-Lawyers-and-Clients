@@ -15,9 +15,9 @@ import { casesABI, casesAddress } from "../contractAddress";
 
 function AddCaseForm(props) {
   const [formData, setFormData] = useState({
-    fullName: props.userDetails[0],
-    currentAddress: props.userDetails[3],
-    phoneNumber: props.userDetails[1],
+    fullName:props.isclient ? props.userDetails[0]:"",
+    currentAddress:props.isclient ? props.userDetails[3]:"",
+    phoneNumber:props.isclient ? props.userDetails[1]:"",
     caseTitle: "",
     caseDescription: "",
     caseType: "",
@@ -30,7 +30,7 @@ function AddCaseForm(props) {
     status: "Submitted",
     lawyerDetails: "",
     lawyerAddress: "",
-    paymentStatus: "0_3",  // 0 payment _ status 3 inita
+    paymentStatus: "0_3",  
   });
   const [account, setAccount] = useState(null);
 
@@ -186,7 +186,7 @@ function AddCaseForm(props) {
         caseId,
         formData.fullName + "_" + formData.phoneNumber,
         formData.currentAddress,
-        formData.caseTitle + "_" + formData.caseDescription,
+        formData.caseTitle + "_" + formData.caseDescription+"_"+caseId,
         fileUrls,
         "Submitted",
         formData.caseType,
@@ -219,7 +219,7 @@ function AddCaseForm(props) {
             <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
-              disabled={true}
+              disabled={props.isclient}
               className="form-control"
               id="fullName"
               name="fullName"
@@ -234,7 +234,7 @@ function AddCaseForm(props) {
             <textarea
               className="form-control"
               id="currentAddress"
-              disabled={true}
+              disabled={props.isclient}
               name="currentAddress"
               value={formData.currentAddress}
               onChange={handleInputChange}
@@ -248,7 +248,7 @@ function AddCaseForm(props) {
               type="tel"
               className="form-control"
               id="phoneNumber"
-              disabled={true}
+              disabled={props.isclient}
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleInputChange}
@@ -294,6 +294,13 @@ function AddCaseForm(props) {
               <option value="">Select Case Type</option>
               <option value="Civil">Civil</option>
               <option value="Criminal">Criminal</option>
+              <option value="Civil suit"> civil suit</option>
+              <option value="Criminal case">Criminal case</option>
+              <option value="Civil misc applications">civil misc applications</option>
+              <option value="Criminal misc applications">criminal misc applications</option>
+              <option value="Civil appeal">civil appeal</option>
+              <option value="Criminal appeal">criminal appeal</option>
+              <option value="Motor accident claim petition(MACP)">motor accident claim petition (M. A. C. P.)</option>
             </select>
           </div>
 

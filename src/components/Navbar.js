@@ -1,10 +1,18 @@
-import React from "react";
+import React,{useState} from "react";
 import Login from "./Login";
 import { BrowserRouter as Router, Link } from "react-router-dom";
-import { FaHome, FaSignInAlt, FaArrowLeft, FaUser } from "react-icons/fa";
+import { FaHome, FaSignInAlt, FaArrowLeft, FaUser ,FaBars } from "react-icons/fa";
 import SideMenu from "./SideMenu";
 
 function Navbar(props) {
+
+  const [menuOpen, setmenuOpen] = useState(false);
+
+  const handleSideMenu= () => {
+    setmenuOpen(!menuOpen)
+  };
+
+
   const handleGoBack = () => {
     window.history.back();
   };
@@ -73,12 +81,22 @@ function Navbar(props) {
           >
             <ul className="navbar-nav mr-auto">
               {props.currentAccount ? (
+                <>
                 <li className="nav-item">
                   <Link to="/" className="nav-link">
                     <FaHome className="mr-1" />
                     Home
                   </Link>
                 </li>
+                <li>
+                <button
+                className=" ml-2 btn outline-secondary"
+                onClick={handleSideMenu}
+              >
+                <FaBars size={15} className="mr-1" />
+              </button>
+                </li>
+                </>
               ) : (
                 ""
               )}
@@ -95,7 +113,9 @@ function Navbar(props) {
               ""
             )}
 
-            
+
+           { menuOpen && (
+            <SideMenu userDetails={props.userDetails}></SideMenu>)}
 
             <Login
               setCurrentAccount={props.setCurrentAccount}

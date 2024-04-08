@@ -98,7 +98,7 @@ function App() {
                  <Route exact path='/client' element={ <ClientHome ></ClientHome>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
                  <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>
-                 <Route exact path='/client-add-case' element={<AddCaseForm userDetails={userDetails}> </AddCaseForm>}></Route>
+                 <Route exact path='/client-add-case' element={<AddCaseForm isclient={userDetails[4]==="client"} userDetails={userDetails}> </AddCaseForm>}></Route>
                  <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails} setcurrentCaseName={setcurrentCaseName}></CaseView>}></Route>
                  <Route exact path='/lawyer-case-view' element={<ViewCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewCases>}></Route>
                  <Route exact path='/lawyer-picked-case-view' element={<ViewPickedCases setcurrentCase={setcurrentCase} setcurrentCaseName={setcurrentCaseName} userDetails={userDetails}></ViewPickedCases>}></Route>

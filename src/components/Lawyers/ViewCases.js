@@ -14,6 +14,7 @@ function ViewCases(props) {
   const [cases, setCases] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [w, setw] = useState([]);
+  const [keyword, setKeyword] = useState("");
   async function getAllproducts() {
     try {
       const { ethereum } = window;
@@ -50,8 +51,20 @@ function ViewCases(props) {
     <>
       <DashboardHeading text={"View Cases"} />
       <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
+
+      <div class=" container input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Search By Case Number</span>
+      </div>
+      <input type="text" class="form-control"  onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="Case number" aria-label="Case Number" aria-describedby="basic-addon1"/>
+    </div>
+
         <div className="row">
-          {cases.map(
+          {cases
+            .filter((caseData) => {
+              const caseString = JSON.stringify(caseData).toLowerCase();
+              return caseString.includes(keyword.toLowerCase());
+            }).map(
             (
               caseData,
               index 

@@ -13,6 +13,8 @@ var CaseIds = [];
 
 function CaseView(props) {
   const [cases, setCases] = useState([]);
+  const [keyword, setKeyword] = useState("");
+
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [w, setw] = useState([]);
   async function getAllproducts() {
@@ -52,34 +54,43 @@ function CaseView(props) {
       <DashboardHeading text={"Your Cases"} />
 
       <div className="container-fluid mt-4 p-5" style={{ marginBottom: "30%" }}>
-        <div className="row">
-          {cases
-            .filter(caseData => caseData.fullNameAndPhoneNumber.split("_")[1] === props.userDetails[1])
-            .map(
-            (
-              caseData,
-              index // Added index parameter to map function
-            ) => (
-              <div key={caseData.id} className="col-md-4">
-                <CaseCard
-                hideSensative={true}
-                  isclient={true}
-                  setcurrentCase={props.setcurrentCase}
-                  caseData={caseData}
-                  CaseId={CaseIds[index]}
-                  userDetails={props.userDetails}
-                  showchat={true}
-                  setcurrentCaseName={props.setcurrentCaseName}
-                />{" "}
-                {/* Passing CaseId using index */}
-                <strong>
-                  <hr />
-                </strong>
-              </div>
-            )
-          )}
+
+      <div class=" container input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">Search By Case Number</span>
         </div>
+        <input type="text" class="form-control"  onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="Case number" aria-label="Case Number" aria-describedby="basic-addon1"/>
       </div>
+
+      <div className="row">
+      {cases
+        .filter((caseData) => {
+          const caseString = JSON.stringify(caseData).toLowerCase();
+          return caseString.includes(keyword.toLowerCase());
+        })
+        .filter(
+          (caseData) =>
+            caseData.fullNameAndPhoneNumber.split("_")[1] === props.userDetails[1]
+        )
+        .map((caseData, index) => (
+          <div key={caseData.id} className="col-md-4">
+            <CaseCard
+              hideSensative={true}
+              isclient={true}
+              setcurrentCase={props.setcurrentCase}
+              caseData={caseData}
+              CaseId={CaseIds[index]}
+              userDetails={props.userDetails}
+              showchat={true}
+              setcurrentCaseName={props.setcurrentCaseName}
+            />
+            <strong>
+              <hr />
+            </strong>
+          </div>
+        ))}
+    </div>
+  </div>
     </>
   );
 }

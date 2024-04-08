@@ -12,6 +12,8 @@ var CaseIds = [];
 
 function ViewPickedCases(props) {
   const [cases, setCases] = useState([]);
+  const [keyword, setKeyword] = useState("");
+
   async function getAllproducts() {
     try {
       const { ethereum } = window;
@@ -44,8 +46,20 @@ function ViewPickedCases(props) {
     <>
       <DashboardHeading text={"Your Cases"} />
       <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
+
+      <div class=" container input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Search By Case Number</span>
+      </div>
+      <input type="text" class="form-control"  onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="Case number" aria-label="Case Number" aria-describedby="basic-addon1"/>
+    </div>
+
       <div className="row">
       {cases
+        .filter((caseData) => {
+          const caseString = JSON.stringify(caseData).toLowerCase();
+          return caseString.includes(keyword.toLowerCase());
+        })
         .filter(caseData => caseData.lawyerDetails.split("_")[1] === props.userDetails[1])
         .map((caseData, index) => (
           <div key={caseData.id} className="col-md-4">
