@@ -302,7 +302,7 @@ export const profileABI = [
 
 
 //export const casesAddress = "0xC68701E6DB7a76f8CAbC24aD2Fc29D2742d28115"; // for testing
-export const casesAddress = "0xF39C2E71b8825B87F9c44Ff4B453ace32230335C";// "0x63a377cD41419e8f95aDd36d13c1EB450232ff26";
+export const casesAddress = "0x86054961ED808c6501ED83580ccf4E6E43741E8d";// "0x63a377cD41419e8f95aDd36d13c1EB450232ff26";
 export const casesABI =[
 	{
 		"anonymous": false,
