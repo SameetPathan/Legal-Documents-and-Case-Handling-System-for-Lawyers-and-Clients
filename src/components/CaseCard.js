@@ -183,7 +183,7 @@ function CaseCard({
     <div className="card mb-4 shadow-sm">
       <div className="card-header bg-dark text-white d-flex justify-content-between">
         <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
-        <h6><span>Case ID:- </span>{CaseId}</h6>
+        <h6><span>Case ID:- </span>{caseData.titleDescription.split("_")[2]}</h6>
         {showchat && (
           <span>
             <Link to="/chat" onClick={() => setcurrentCasehandle(CaseId,caseData.titleDescription.split("_")[0])}>
