@@ -15,6 +15,17 @@ function ViewCases(props) {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [w, setw] = useState([]);
   const [keyword, setKeyword] = useState("");
+
+  const excludedCaseIds = [
+    "0507960746",
+    "1984397583",
+    "2174819045",
+    "4326657592",
+    "2896608797",
+    "9300061748",
+    "9499280995",
+  ];
+
   async function getAllproducts() {
     try {
       const { ethereum } = window;
@@ -35,8 +46,8 @@ function ViewCases(props) {
         setw(whole);
         setCases(whole);
         setFilteredProducts(whole);
-        //console.log("### Ether Cases Data : ", whole);
-        //console.log("caseIDS:", CaseIds);
+        console.log("### Ether Cases Data : ", whole);
+      console.log("caseIDS:", CaseIds);
       }
     } catch (error) {
       console.error(error);
@@ -60,11 +71,15 @@ function ViewCases(props) {
     </div>
 
         <div className="row">
-          {cases
-            .filter((caseData) => {
-              const caseString = JSON.stringify(caseData).toLowerCase();
-              return caseString.includes(keyword.toLowerCase());
-            }).map(
+        {cases
+          .filter((caseData, index) => {
+            const caseString = JSON.stringify(caseData).toLowerCase();
+            const caseId = CaseIds[index];
+            return (
+              !excludedCaseIds.includes(caseId) &&
+              caseString.includes(keyword.toLowerCase())
+            );
+          }).map(
             (
               caseData,
               index 

@@ -2,7 +2,6 @@ import React,{useState} from "react";
 import Login from "./Login";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { FaHome, FaSignInAlt, FaArrowLeft, FaUser ,FaBars } from "react-icons/fa";
-import SideMenu from "./SideMenu";
 
 function Navbar(props) {
 
@@ -113,9 +112,6 @@ function Navbar(props) {
               ""
             )}
 
-
-           { menuOpen && (
-            <SideMenu userDetails={props.userDetails}></SideMenu>)}
 
             <Login
               setCurrentAccount={props.setCurrentAccount}

@@ -170,9 +170,10 @@ function CaseCard({
     });
   };
 
-  const setcurrentCasehandle = (CaseId,caseName) => {
-    setcurrentCase(CaseId);
-    setcurrentCaseName(caseName);
+  const setcurrentCasehandle = () => {
+    alert("Chats are not Enabled");
+    //setcurrentCase(CaseId);
+    //setcurrentCaseName(caseName);
   };
 
   useEffect(() => {
@@ -184,9 +185,9 @@ function CaseCard({
       <div className="card-header bg-dark text-white d-flex justify-content-between">
         <h5 className="mb-0">{caseData.titleDescription.split("_")[0]}</h5>
         <h6><span>Case ID:- </span>{caseData.titleDescription.split("_")[2]}</h6>
-        {showchat && (
+        {true && (
           <span>
-            <Link to="/chat" onClick={() => setcurrentCasehandle(CaseId,caseData.titleDescription.split("_")[0])}>
+            <Link onClick={() => setcurrentCasehandle()}>
               <FaSnapchat style={{ color: "white" }} />
             </Link>
           </span>
@@ -470,7 +471,7 @@ function CaseCard({
           <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => handleUpdateCase(CaseId)}>
+          <Button variant="primary" onClick={() => handleUpdateCase(CaseId)}  disabled={true}>
             Take Case
           </Button>
         </Modal.Footer>
