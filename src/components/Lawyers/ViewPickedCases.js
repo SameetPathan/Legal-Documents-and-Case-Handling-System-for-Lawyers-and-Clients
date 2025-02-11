@@ -10,11 +10,10 @@ var arraylist = [];
 var whole = [];
 var CaseIds = [];
 
-function ViewCases(props) {
+function ViewPickedCases(props) {
   const [cases, setCases] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [w, setw] = useState([]);
   const [keyword, setKeyword] = useState("");
+
   async function getAllproducts() {
     try {
       const { ethereum } = window;
@@ -32,11 +31,7 @@ function ViewCases(props) {
         for (var i = 0; i < arraylist.length; i++) {
           whole[i] = arraylist[i];
         }
-        setw(whole);
         setCases(whole);
-        setFilteredProducts(whole);
-        //console.log("### Ether Cases Data : ", whole);
-        //console.log("caseIDS:", CaseIds);
       }
     } catch (error) {
       console.error(error);
@@ -49,7 +44,7 @@ function ViewCases(props) {
 
   return (
     <>
-      <DashboardHeading text={"View Cases"} />
+      <DashboardHeading text={"Your Cases"} />
       <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
 
       <div class=" container input-group mb-3">
@@ -59,35 +54,34 @@ function ViewCases(props) {
       <input type="text" class="form-control"  onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="Case number" aria-label="Case Number" aria-describedby="basic-addon1"/>
     </div>
 
-        <div className="row">
-          {cases
-            .filter((caseData) => {
-              const caseString = JSON.stringify(caseData).toLowerCase();
-              return caseString.includes(keyword.toLowerCase());
-            }).map(
-            (
-              caseData,
-              index 
-            ) => (
-              <div key={caseData.id} className="col-md-4">
-                <CaseCard
-                  hideSensative={false}
-                  showclose={false}
-                  showtake={true}
-                  isclient={false}
-                  setcurrentCase={props.setcurrentCase}
-                  caseData={caseData}
-                  CaseId={CaseIds[index]}
-                  userDetails={props.userDetails}
-                />{" "}
-               
-              </div>
-            )
-          )}
-        </div>
+      <div className="row">
+      {cases
+        .filter((caseData) => {
+          const caseString = JSON.stringify(caseData).toLowerCase();
+          return caseString.includes(keyword.toLowerCase());
+        })
+        .filter(caseData => caseData.lawyerDetails.split("_")[1] === props.userDetails[1])
+        .map((caseData, index) => (
+          <div key={caseData.id} className="col-md-4">
+            <CaseCard
+              hideSensative={true}
+              isclient={false}
+              showtake={false}
+              showclose={true}
+              setcurrentCase={props.setcurrentCase}
+              setcurrentCaseName={props.setcurrentCaseName}
+              caseData={caseData}
+              CaseId={CaseIds[index]}
+              userDetails={props.userDetails}
+              showchat={true}
+            />
+          </div>
+        ))}
+    </div>
+    
       </div>
     </>
   );
 }
 
-export default ViewCases;
+export default ViewPickedCases;

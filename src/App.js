@@ -4,7 +4,9 @@ import { useState,useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
-  Route} from 'react-router-dom';
+  Route,
+  Link
+} from 'react-router-dom';
 import ForceLogin from './components/ForceLogin';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -15,9 +17,14 @@ import AddCaseForm from './components/Clients/AddCaseForm';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ViewCases from './components/Lawyers/ViewCases';
+import AddDocuments from './components/Clients/AddDocuments';
+import ViewDocuments from './components/Clients/ViewDocuments';
 import UserProfileForm from './components/UserProfileForm';
+import CaseView from './components/Clients/CaseView';
+import ChatComponent from './components/Chats';
 import { ethers } from "ethers";
 import { profileABI, profileAddress } from './components/contractAddress';
+import ViewPickedCases from './components/Lawyers/ViewPickedCases';
 
 
 
@@ -90,8 +97,16 @@ function App() {
                  <Route exact path='/profile' element={<UserProfileForm ></UserProfileForm>}></Route>
                  <Route exact path='/client' element={ <ClientHome ></ClientHome>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
+                 <Route exact path='/admin' element={<ViewDocuments userId={"sameet"} userType={"admin"}></ViewDocuments>}></Route>
                  <Route exact path='/client-add-case' element={<AddCaseForm isclient={userDetails[4]==="client"} userDetails={userDetails}> </AddCaseForm>}></Route>
+                 <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails} setcurrentCaseName={setcurrentCaseName}></CaseView>}></Route>
                  <Route exact path='/lawyer-case-view' element={<ViewCases setcurrentCase={setcurrentCase} userDetails={userDetails}></ViewCases>}></Route>
+                 <Route exact path='/lawyer-picked-case-view' element={<ViewPickedCases setcurrentCase={setcurrentCase} setcurrentCaseName={setcurrentCaseName} userDetails={userDetails}></ViewPickedCases>}></Route>
+                 <Route exact path='/client-add-document' element={<AddDocuments></AddDocuments>}></Route>
+                 <Route exact path='/client-view-document' element={<ViewDocuments userId={"sameet"} userType={"normal"}></ViewDocuments>}></Route>
+
+                 <Route exact path='/chat' element={<ChatComponent userDetails={userDetails} currentCaseName={currentCaseName} currentCase={currentCase}></ChatComponent>}></Route>
+
               </Routes>
             </div>
           

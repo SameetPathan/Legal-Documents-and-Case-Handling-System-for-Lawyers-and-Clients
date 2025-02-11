@@ -7,7 +7,7 @@ function Footer() {
       <div className="copyright fixed-bottom">
         <div className="container-fluid text-center">
           <p>
-            Copyrights &copy; 2024 - <a>Legal Vault</a>, All Rights Reserved.
+            Copyrights &copy; 2024 - <a>Jarvis Vision</a>, All Rights Reserved.
             <br></br>
           </p>
         </div>
