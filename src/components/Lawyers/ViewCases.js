@@ -192,20 +192,7 @@ function ViewCases(props) {
               />
             </div>
             
-            {/* Optional: Data Source Toggle (You can remove this in production) */}
-            <div className="d-flex justify-content-end mt-3">
-              <button 
-                className="btn btn-sm"
-                onClick={toggleDataSource}
-                style={{ 
-                  backgroundColor: "#333", 
-                  color: "#fff",
-                  border: "none"
-                }}
-              >
-                Data Source: {dataSource === "firebase" ? "Firebase" : "Blockchain"}
-              </button>
-            </div>
+
           </div>
         </div>
 

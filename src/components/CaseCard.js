@@ -18,6 +18,7 @@ import {
   FaExclamationTriangle,
   FaCheckCircle,
   FaPlayCircle,
+  FaSpinner
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
@@ -26,6 +27,7 @@ import { database } from "../firebaseConfig";
 import { toast } from "react-toastify";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { format } from "date-fns";
+import MetaMaskAnimation from "./MetaMaskAnimation"; // Import the new animation component
 
 function CaseCard({
   hideSensative,
@@ -48,6 +50,12 @@ function CaseCard({
   });
   const [amount, setAmount] = useState("");
   const [expandedSection, setExpandedSection] = useState(null);
+  
+  // Add new state for MetaMask animation
+  const [metaMaskModalVisible, setMetaMaskModalVisible] = useState(false);
+  const [metaMaskStatus, setMetaMaskStatus] = useState("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusSubmessage, setStatusSubmessage] = useState("");
 
   // Helper functions to get case data properties
   const getCaseId = () => caseData?.caseId || "N/A";
@@ -148,57 +156,250 @@ function CaseCard({
   const handleModalShow = () => setShowModal(true);
   const handleModalClose = () => setShowModal(false);
 
-  // Handle payment and case closure
+  // Handle payment and case closure with MetaMask animation
   const handleCloseCase = async (caseId) => {
+    // Show MetaMask modal
+    setMetaMaskModalVisible(true);
+    setMetaMaskStatus("connecting");
+    setStatusMessage("Connecting to MetaMask...");
+    setStatusSubmessage("Please confirm in your wallet");
+    
     try {
-      const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
-      
-      let updates = {};
-      if (isclient) {
-        // Client confirming payment
-        updates = {
-          paymentStatus: "completed",
-          status: "Completed",
-          closedAt: new Date().toISOString()
-        };
-        toast.success("Case closed and payment completed successfully.");
-      } else {
-        // Lawyer requesting payment
-        if (!amount || parseFloat(amount) <= 0) {
-          toast.error("Please enter a valid payment amount.");
-          return;
+      // Simulate connecting to MetaMask (2 seconds)
+      setTimeout(async () => {
+        try {
+          // Check if MetaMask is installed
+          if (typeof window.ethereum === 'undefined') {
+            setMetaMaskStatus("error");
+            setStatusMessage("MetaMask Not Found");
+            setStatusSubmessage("Please install MetaMask to continue");
+            
+            setTimeout(() => {
+              setMetaMaskModalVisible(false);
+              toast.error("MetaMask is not installed. Please install MetaMask to continue.");
+            }, 2000);
+            return;
+          }
+          
+          // Connected successfully
+          setMetaMaskStatus("connected");
+          setStatusMessage("Wallet Connected!");
+          setStatusSubmessage(isclient ? "Preparing to complete payment..." : "Preparing payment request...");
+          
+          // Wait 2 seconds before proceeding
+          setTimeout(async () => {
+            setMetaMaskStatus("submitting");
+            setStatusMessage(isclient ? "Processing Payment..." : "Submitting Request...");
+            setStatusSubmessage("Please wait while we complete your transaction");
+            
+            // Reference to the case in the database
+            const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
+            
+            let updates = {};
+            if (isclient) {
+              // Client confirming payment
+              updates = {
+                paymentStatus: "completed",
+                status: "Completed",
+                closedAt: new Date().toISOString()
+              };
+              
+              // Wait 3 seconds to simulate transaction
+              setTimeout(async () => {
+                try {
+                  await update(caseRef, updates);
+                  
+                  // Show success state
+                  setMetaMaskStatus("success");
+                  setStatusMessage("Payment Successful!");
+                  setStatusSubmessage("Your case has been closed successfully");
+                  
+                  // Close modal after 2 seconds and refresh
+                  setTimeout(() => {
+                    setMetaMaskModalVisible(false);
+                    toast.success("Case closed and payment completed successfully.");
+                    window.location.reload();
+                  }, 2000);
+                } catch (error) {
+                  setMetaMaskStatus("error");
+                  setStatusMessage("Transaction Failed");
+                  setStatusSubmessage("There was an error processing your payment");
+                  
+                  // Close modal after 2 seconds
+                  setTimeout(() => {
+                    setMetaMaskModalVisible(false);
+                    toast.error("Error processing payment. Please try again.");
+                  }, 2000);
+                }
+              }, 3000);
+            } else {
+              // Lawyer requesting payment
+              if (!amount || parseFloat(amount) <= 0) {
+                setMetaMaskStatus("error");
+                setStatusMessage("Invalid Amount");
+                setStatusSubmessage("Please enter a valid payment amount");
+                
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                  setMetaMaskModalVisible(false);
+                  toast.error("Please enter a valid payment amount.");
+                }, 2000);
+                return;
+              }
+              
+              updates = {
+                paymentAmount: amount,
+                paymentStatus: "pending",
+                paymentRequestedAt: new Date().toISOString()
+              };
+              
+              // Wait 2 seconds to simulate transaction
+              setTimeout(async () => {
+                try {
+                  await update(caseRef, updates);
+                  
+                  // Show success state
+                  setMetaMaskStatus("success");
+                  setStatusMessage("Request Submitted!");
+                  setStatusSubmessage("Payment request sent to client successfully");
+                  
+                  // Close modal after 2 seconds and refresh
+                  setTimeout(() => {
+                    setMetaMaskModalVisible(false);
+                    toast.success("Payment request sent to client successfully.");
+                    window.location.reload();
+                  }, 2000);
+                } catch (error) {
+                  setMetaMaskStatus("error");
+                  setStatusMessage("Request Failed");
+                  setStatusSubmessage("There was an error sending your payment request");
+                  
+                  // Close modal after 2 seconds
+                  setTimeout(() => {
+                    setMetaMaskModalVisible(false);
+                    toast.error("Error processing payment request. Please try again.");
+                  }, 2000);
+                }
+              }, 2000);
+            }
+          }, 2000);
+        } catch (error) {
+          setMetaMaskStatus("error");
+          setStatusMessage("Connection Error");
+          setStatusSubmessage("Failed to connect to MetaMask");
+          
+          setTimeout(() => {
+            setMetaMaskModalVisible(false);
+            toast.error("Error connecting to MetaMask. Please try again.");
+          }, 2000);
         }
-        updates = {
-          paymentAmount: amount,
-          paymentStatus: "pending",
-          paymentRequestedAt: new Date().toISOString()
-        };
-        toast.success("Payment request sent to client successfully.");
-      }
-      
-      await update(caseRef, updates);
-      window.location.reload(); // Refresh to show updated status
+      }, 2000);
     } catch (error) {
       console.error("Error updating payment status:", error);
-      toast.error("Error processing payment action. Please try again.");
+      setMetaMaskStatus("error");
+      setStatusMessage("Transaction Error");
+      setStatusSubmessage("An unexpected error occurred");
+      
+      setTimeout(() => {
+        setMetaMaskModalVisible(false);
+        toast.error("Error processing payment action. Please try again.");
+      }, 2000);
     }
   };
 
-  // Start the case (change status from Taken to Started)
+  // Start the case (with MetaMask animation)
   const handleStartCase = async () => {
+    // Show MetaMask modal
+    setMetaMaskModalVisible(true);
+    setMetaMaskStatus("connecting");
+    setStatusMessage("Connecting to MetaMask...");
+    setStatusSubmessage("Please confirm in your wallet");
+    
     try {
-      const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
-      const updates = {
-        status: "Started",
-        startedAt: new Date().toISOString()
-      };
-      
-      await update(caseRef, updates);
-      toast.success("Case has been started successfully.");
-      window.location.reload(); // Refresh to show updated status
+      // Simulate connecting to MetaMask (2 seconds)
+      setTimeout(async () => {
+        try {
+          // Check if MetaMask is installed
+          if (typeof window.ethereum === 'undefined') {
+            setMetaMaskStatus("error");
+            setStatusMessage("MetaMask Not Found");
+            setStatusSubmessage("Please install MetaMask to continue");
+            
+            setTimeout(() => {
+              setMetaMaskModalVisible(false);
+              toast.error("MetaMask is not installed. Please install MetaMask to continue.");
+            }, 2000);
+            return;
+          }
+          
+          // Connected successfully
+          setMetaMaskStatus("connected");
+          setStatusMessage("Wallet Connected!");
+          setStatusSubmessage("Preparing to start case...");
+          
+          // Wait 2 seconds before proceeding
+          setTimeout(async () => {
+            setMetaMaskStatus("submitting");
+            setStatusMessage("Starting Case...");
+            setStatusSubmessage("Please wait while we update the case status");
+            
+            // Reference to the case in the database
+            const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
+            const updates = {
+              status: "Started",
+              startedAt: new Date().toISOString()
+            };
+            
+            // Wait 2 seconds to simulate transaction
+            setTimeout(async () => {
+              try {
+                await update(caseRef, updates);
+                
+                // Show success state
+                setMetaMaskStatus("success");
+                setStatusMessage("Case Started!");
+                setStatusSubmessage("The case has been started successfully");
+                
+                // Close modal after 2 seconds and refresh
+                setTimeout(() => {
+                  setMetaMaskModalVisible(false);
+                  toast.success("Case has been started successfully.");
+                  window.location.reload();
+                }, 2000);
+              } catch (error) {
+                setMetaMaskStatus("error");
+                setStatusMessage("Transaction Failed");
+                setStatusSubmessage("There was an error starting the case");
+                
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                  setMetaMaskModalVisible(false);
+                  toast.error("Error starting case. Please try again.");
+                }, 2000);
+              }
+            }, 2000);
+          }, 2000);
+        } catch (error) {
+          setMetaMaskStatus("error");
+          setStatusMessage("Connection Error");
+          setStatusSubmessage("Failed to connect to MetaMask");
+          
+          setTimeout(() => {
+            setMetaMaskModalVisible(false);
+            toast.error("Error connecting to MetaMask. Please try again.");
+          }, 2000);
+        }
+      }, 2000);
     } catch (error) {
       console.error("Error starting case:", error);
-      toast.error("Error starting case. Please try again.");
+      setMetaMaskStatus("error");
+      setStatusMessage("Transaction Error");
+      setStatusSubmessage("An unexpected error occurred");
+      
+      setTimeout(() => {
+        setMetaMaskModalVisible(false);
+        toast.error("Error starting case. Please try again.");
+      }, 2000);
     }
   };
 
@@ -211,26 +412,105 @@ function CaseCard({
     }
   };
 
-  // Update case when lawyer takes it
+  // Update case when lawyer takes it (with MetaMask animation)
   const handleUpdateCaseFirebase = async () => {
+    // Close the current modal
+    handleModalClose();
+    
+    // Show MetaMask modal
+    setMetaMaskModalVisible(true);
+    setMetaMaskStatus("connecting");
+    setStatusMessage("Connecting to MetaMask...");
+    setStatusSubmessage("Please confirm in your wallet");
+    
     try {
-      const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
-      
-      const updates = {
-        lawyerName: formData.lawyerName,
-        lawyerPhoneNumber: formData.lawyerPhoneNumber,
-        lawyerAddress: formData.lawyerAddress,
-        status: "Taken",
-        takenAt: new Date().toISOString()
-      };
-      
-      await update(caseRef, updates);
-      toast.success("Case taken successfully.");
-      handleModalClose();
-      window.location.reload(); // Refresh to show updated status
+      // Simulate connecting to MetaMask (2 seconds)
+      setTimeout(async () => {
+        try {
+          // Check if MetaMask is installed
+          if (typeof window.ethereum === 'undefined') {
+            setMetaMaskStatus("error");
+            setStatusMessage("MetaMask Not Found");
+            setStatusSubmessage("Please install MetaMask to continue");
+            
+            setTimeout(() => {
+              setMetaMaskModalVisible(false);
+              toast.error("MetaMask is not installed. Please install MetaMask to continue.");
+            }, 2000);
+            return;
+          }
+          
+          // Connected successfully
+          setMetaMaskStatus("connected");
+          setStatusMessage("Wallet Connected!");
+          setStatusSubmessage("Preparing to take case...");
+          
+          // Wait 2 seconds before proceeding
+          setTimeout(async () => {
+            setMetaMaskStatus("submitting");
+            setStatusMessage("Taking Case...");
+            setStatusSubmessage("Please wait while we update the case status");
+            
+            // Reference to the case in the database
+            const caseRef = rtdbRef(database, `Cases/${firebaseId}`);
+            const updates = {
+              lawyerName: formData.lawyerName,
+              lawyerPhoneNumber: formData.lawyerPhoneNumber,
+              lawyerAddress: formData.lawyerAddress,
+              status: "Taken",
+              takenAt: new Date().toISOString()
+            };
+            
+            // Wait 2 seconds to simulate transaction
+            setTimeout(async () => {
+              try {
+                await update(caseRef, updates);
+                
+                // Show success state
+                setMetaMaskStatus("success");
+                setStatusMessage("Case Taken!");
+                setStatusSubmessage("You have successfully taken this case");
+                
+                // Close modal after 2 seconds and refresh
+                setTimeout(() => {
+                  setMetaMaskModalVisible(false);
+                  toast.success("Case taken successfully.");
+                  window.location.reload();
+                }, 2000);
+              } catch (error) {
+                setMetaMaskStatus("error");
+                setStatusMessage("Transaction Failed");
+                setStatusSubmessage("There was an error taking the case");
+                
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                  setMetaMaskModalVisible(false);
+                  toast.error("Error taking case. Please try again.");
+                }, 2000);
+              }
+            }, 2000);
+          }, 2000);
+        } catch (error) {
+          setMetaMaskStatus("error");
+          setStatusMessage("Connection Error");
+          setStatusSubmessage("Failed to connect to MetaMask");
+          
+          setTimeout(() => {
+            setMetaMaskModalVisible(false);
+            toast.error("Error connecting to MetaMask. Please try again.");
+          }, 2000);
+        }
+      }, 2000);
     } catch (error) {
       console.error("Error updating case in Firebase:", error);
-      toast.error("Error taking case. Please try again.");
+      setMetaMaskStatus("error");
+      setStatusMessage("Transaction Error");
+      setStatusSubmessage("An unexpected error occurred");
+      
+      setTimeout(() => {
+        setMetaMaskModalVisible(false);
+        toast.error("Error taking case. Please try again.");
+      }, 2000);
     }
   };
 
@@ -881,7 +1161,7 @@ function CaseCard({
                 </Form.Group>
    
                 <Form.Group controlId="lawyerName" className="mb-3">
-                  <Form.Label style={{ color: "#aaa" }}>Lawyer Name</Form.Label>
+                  <Form.Label style={{ color: "#aaa" }}>Lawyer Address</Form.Label>
                   <Form.Control
                     type="text"
                     disabled={true}
@@ -939,6 +1219,42 @@ function CaseCard({
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* MetaMask Animation Modal */}
+      {metaMaskModalVisible && (
+        <div className="modal-backdrop show" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}></div>
+      )}
+      <div className={`modal ${metaMaskModalVisible ? 'show d-block' : ''}`} tabIndex="-1" role="dialog" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content" style={{ backgroundColor: '#222', color: '#fff', border: '1px solid #444' }}>
+            <div className="modal-header" style={{ borderBottom: '1px solid #444' }}>
+              <h5 className="modal-title">
+                {statusMessage || "Processing..."}
+              </h5>
+            </div>
+            <div className="modal-body text-center py-4">
+              <MetaMaskAnimation 
+                status={metaMaskStatus} 
+                message={statusMessage}
+                submessage={statusSubmessage}
+              />
+            </div>
+            
+            {metaMaskStatus === "error" && (
+              <div className="modal-footer" style={{ borderTop: '1px solid #444' }}>
+                <button 
+                  type="button" 
+                  className="btn"
+                  onClick={() => setMetaMaskModalVisible(false)}
+                  style={{ backgroundColor: "#333", color: "#fff" }}
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
