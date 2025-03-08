@@ -15,19 +15,15 @@ function ChatComponent(props) {
     name: 'Unknown Case'
   });
 
-  // Scroll to bottom of messages
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Load messages when component mounts or case changes
   useEffect(() => {
     setLoading(true);
     
-    // Get case ID from props or localStorage
     const caseId = props.currentCase?.caseId || localStorage.getItem("selectedCaseId");
     
-    // Get case name from props or localStorage, with a fallback
     let caseName = "Case Chat";
     if (props.currentCaseName && typeof props.currentCaseName === 'string') {
       caseName = props.currentCaseName;
@@ -48,21 +44,17 @@ function ChatComponent(props) {
       name: caseName
     });
     
-    // Reference to messages for this case
     const messagesRef = ref(database, `messages/${caseId}`);
     
-    // Listen for messages
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       if (snapshot.exists()) {
         const messagesData = snapshot.val();
         const messagesList = [];
         
-        // Convert object to array and sort by timestamp
         for (let id in messagesData) {
           messagesList.push({ id, ...messagesData[id] });
         }
         
-        // Sort messages by timestamp if available
         messagesList.sort((a, b) => {
           const timestampA = a.timestamp || 0;
           const timestampB = b.timestamp || 0;
@@ -75,35 +67,32 @@ function ChatComponent(props) {
       }
       
       setLoading(false);
-      
-      // Scroll to bottom after messages load
+
       setTimeout(scrollToBottom, 100);
     });
     
-    // Cleanup listener on unmount
     return () => {
       unsubscribe();
     };
   }, [props.currentCase, props.currentCaseName]);
 
-  // Scroll to bottom when new messages are added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Handle message submission
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
     if (!message.trim()) return;
     
-    // Extract name and type safely
+ 
     let name = "User";
     let type = props.isclient ? "client" : "lawyer";
     
     if (props.userDetails && Array.isArray(props.userDetails) && props.userDetails.length > 0) {
       name = props.userDetails[0] || "User";
-      // Check if userDetails[4] exists before using it
+ 
       if (props.userDetails.length > 4) {
         type = props.userDetails[4] || type;
       }

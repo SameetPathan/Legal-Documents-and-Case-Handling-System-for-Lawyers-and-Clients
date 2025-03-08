@@ -11,23 +11,23 @@ function CaseView(props) {
   const [keyword, setKeyword] = useState("");
   const [filteredCases, setFilteredCases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState("desc"); // desc or asc
-  const [filterStatus, setFilterStatus] = useState("all"); // all, open, closed, etc.
+  const [sortOrder, setSortOrder] = useState("desc"); 
+  const [filterStatus, setFilterStatus] = useState("all"); 
 
-  // Fetch cases from Firebase
+
   const fetchCasesFromFirebase = async () => {
     setLoading(true);
     try {
-      // Reference to the Cases node in Firebase
+
       const casesRef = rtdbRef(database, "Cases");
       
-      // Get all cases from Firebase
+      // Get all cases from Blockchain
       const snapshot = await get(casesRef);
       
       if (snapshot.exists()) {
         const casesData = [];
         
-        // Convert Firebase object to array and add the Firebase key as id
+        // Convert Blockchain object to array and add the Blockchain key as id
         snapshot.forEach((childSnapshot) => {
           const caseData = {
             id: childSnapshot.key,
@@ -40,12 +40,12 @@ function CaseView(props) {
         setCases(casesData);
         setFilteredCases(casesData);
       } else {
-        console.log("No cases found in Firebase");
+        console.log("No cases found in Blockchain");
         setCases([]);
         setFilteredCases([]);
       }
     } catch (error) {
-      console.error("Error fetching cases from Firebase:", error);
+      console.error("Error fetching cases from Blockchain:", error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ function CaseView(props) {
   const fetchClientCases = async () => {
     setLoading(true);
     try {
-      // Reference to the Cases node in Firebase
+      // Reference to the Cases node in Blockchain
       const casesRef = rtdbRef(database, "Cases");
       
       // Get cases for this client
@@ -64,7 +64,7 @@ function CaseView(props) {
       if (snapshot.exists()) {
         const casesData = [];
         
-        // Convert Firebase object to array and filter for the current client
+        // Convert Blockchain object to array and filter for the current client
         snapshot.forEach((childSnapshot) => {
           const caseData = {
             id: childSnapshot.key,
@@ -86,7 +86,7 @@ function CaseView(props) {
         setFilteredCases([]);
       }
     } catch (error) {
-      console.error("Error fetching client cases from Firebase:", error);
+      console.error("Error fetching client cases from Blockchain:", error);
     } finally {
       setLoading(false);
     }

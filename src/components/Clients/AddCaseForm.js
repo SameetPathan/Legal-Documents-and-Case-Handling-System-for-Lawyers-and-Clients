@@ -1,4 +1,4 @@
-import { FaCheck, FaCalendarAlt, FaUpload, FaUserAlt, FaPhone, FaMapMarkerAlt, FaFileAlt, FaGavel, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaCheck, FaCalendarAlt, FaUpload, FaUserAlt, FaPhone, FaMapMarkerAlt, FaFileAlt, FaGavel, FaArrowLeft, FaArrowRight, FaWallet, FaSpinner } from "react-icons/fa";
 import {
   getStorage,
   ref as storageRef,
@@ -32,6 +32,10 @@ function AddCaseForm(props) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
+  const [metamaskStatus, setMetamaskStatus] = useState("idle"); 
+  
+  // Define modal state
+  const [showModal, setShowModal] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -51,7 +55,6 @@ function AddCaseForm(props) {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Fix: Only update phone number if it's not already set
     if (props.isclient && !formData.phoneNumber) {
       setFormData(prev => ({...prev, phoneNumber: props.userDetails[1]}));
     }
@@ -61,20 +64,86 @@ function AddCaseForm(props) {
       setIsSubmitting(false);
       return;
     }
-
-    // Use the imported storage directly
-    const filesToUpload = [
-      "mutationEntries",
-      "deedOfTitle",
-      "noEncumbranceCertificate",
-      "searchReport",
-      "charsheetWithStatementOfWitnesses",
-    ];
-
-    const fileUrls = [];
-    const fileUrlsE = {};
-
+  
+    // Show the metamask connection modal
+    setShowModal(true);
+    setMetamaskStatus("connecting");
+    
+    // First, check MetaMask connection and ask for confirmation
     try {
+      // Check if MetaMask is installed
+      if (typeof window.ethereum === 'undefined') {
+        setMetamaskStatus("error");
+        setTimeout(() => {
+          setShowModal(false);
+          toast.error("MetaMask is not installed. Please install MetaMask to continue.");
+          setIsSubmitting(false);
+        }, 1500);
+        return;
+      }
+  
+      // Request MetaMask account access - this will open the MetaMask popup
+      console.log("Requesting MetaMask connection...");
+      
+      // Simulating a delay to show the loader (MetaMask will show its own UI)
+      setTimeout(async () => {
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          console.log("MetaMask connected successfully");
+          setMetamaskStatus("connected");
+          
+          // Wait for 2 seconds to show the success state
+          setTimeout(async () => {
+            // Continue with the form submission after MetaMask connection
+            await processFormSubmission();
+          }, 2000);
+        } catch (error) {
+          setMetamaskStatus("error");
+          setTimeout(() => {
+            setShowModal(false);
+            if (error.code === 4001) {
+              // User rejected the connection request
+              toast.error("You need to connect to MetaMask to submit your case.");
+            } else {
+              toast.error("Error connecting to MetaMask. Please try again.");
+            }
+            setIsSubmitting(false);
+          }, 1500);
+        }
+      }, 1500);
+  
+    } catch (metaMaskError) {
+      console.error("MetaMask connection error:", metaMaskError);
+      setMetamaskStatus("error");
+      setTimeout(() => {
+        setShowModal(false);
+        if (metaMaskError.code === 4001) {
+          // User rejected the connection request
+          toast.error("You need to connect to MetaMask to submit your case.");
+        } else {
+          toast.error("Error connecting to MetaMask. Please try again.");
+        }
+        setIsSubmitting(false);
+      }, 1500);
+    }
+  };
+  
+  // Separated the form submission logic into its own function
+  const processFormSubmission = async () => {
+    try {
+      setMetamaskStatus("submitting");
+      
+      const filesToUpload = [
+        "mutationEntries",
+        "deedOfTitle",
+        "noEncumbranceCertificate",
+        "searchReport",
+        "charsheetWithStatementOfWitnesses",
+      ];
+    
+      const fileUrls = [];
+      const fileUrlsE = {};
+    
       await Promise.all(
         filesToUpload.map(async (fieldName) => {
           const files = formData[fieldName];
@@ -95,134 +164,79 @@ function AddCaseForm(props) {
           }
         })
       );
-
-      // Update the form data with file URLs
+    
       const updatedFormData = {
         ...formData,
         ...fileUrlsE,
         timestamp: new Date().toISOString(),
         status: "Pending Verification",
       };
-
-      // Generate case ID
+    
       let caseId = "";
       for (let i = 0; i < 10; i++) {
         caseId += Math.floor(Math.random() * 10);
       }
       
-      // Store data in Firebase Realtime Database
       try {
-        // Use the imported database directly
         const casesRef = rtdbRef(database, "Cases");
         const newCaseRef = push(casesRef);
         
-        // Create a data object to store in Firebase
         const caseData = {
           ...updatedFormData,
           caseId: caseId,
           clientId: props.isclient ? props.userDetails[2] : null,
           submittedAt: new Date().toISOString(),
+          walletAddress: window.ethereum.selectedAddress || "",
         };
         
-        // Save the data to Firebase
         await set(newCaseRef, caseData);
         console.log("Case saved to Firebase Realtime Database");
-        toast.success("Case submitted successfully");
         
-        // Reset form after successful submission
-        setFormData({
-          fullName: props.isclient ? props.userDetails[0] : "",
-          currentAddress: props.isclient ? props.userDetails[3] : "",
-          phoneNumber: props.isclient ? props.userDetails[1] : "",
-          caseTitle: "",
-          caseDescription: "",
-          caseType: "",
-          mutationEntries: null,
-          deedOfTitle: null,
-          noEncumbranceCertificate: null,
-          searchReport: null,
-          copyOfFIR: null,
-          charsheetWithStatementOfWitnesses: null,
-          status: "Submitted",
-          lawyerDetails: "",
-          lawyerAddress: "",
-          paymentStatus: "not_initiated",
-        });
-        
-        // Navigate back after successful submission
-        window.history.back();
+        // Set success status and show for a moment before redirecting
+        setMetamaskStatus("success");
+        setTimeout(() => {
+          setShowModal(false);
+          toast.success("Case submitted successfully");
+          
+          setFormData({
+            fullName: props.isclient ? props.userDetails[0] : "",
+            currentAddress: props.isclient ? props.userDetails[3] : "",
+            phoneNumber: props.isclient ? props.userDetails[1] : "",
+            caseTitle: "",
+            caseDescription: "",
+            caseType: "",
+            mutationEntries: null,
+            deedOfTitle: null,
+            noEncumbranceCertificate: null,
+            searchReport: null,
+            copyOfFIR: null,
+            charsheetWithStatementOfWitnesses: null,
+            status: "Submitted",
+            lawyerDetails: "",
+            lawyerAddress: "",
+            paymentStatus: "not_initiated",
+          });
+          
+          window.history.back();
+        }, 2000);
         
       } catch (firebaseError) {
         console.error("Error saving to Firebase:", firebaseError);
-        toast.error("Failed to save case to database. Please try again.");
+        setMetamaskStatus("error");
+        setTimeout(() => {
+          setShowModal(false);
+          toast.error("Failed to save case to database. Please try again.");
+          setIsSubmitting(false);
+        }, 1500);
       }
     } catch (error) {
       console.error("Error submitting case:", error);
-      toast.error("Failed to submit case. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Function to fetch cases by client ID
-  const fetchCasesByClientId = async (clientId) => {
-    try {
-      // Use the imported database directly
-      const casesRef = rtdbRef(database, "Cases");
-      const snapshot = await get(casesRef);
-      
-      if (snapshot.exists()) {
-        const allCases = [];
-        snapshot.forEach((childSnapshot) => {
-          const caseData = { id: childSnapshot.key, ...childSnapshot.val() };
-          if (caseData.clientId === clientId) {
-            allCases.push(caseData);
-          }
-        });
-        return allCases;
-      } else {
-        return [];
-      }
-    } catch (error) {
-      console.error("Error fetching cases:", error);
-      toast.error("Error fetching case data");
-      return [];
-    }
-  };
-
-  // Function to update case status
-  const updateCaseStatus = async (caseId, newStatus) => {
-    try {
-      // Use the imported database directly
-      const casesRef = rtdbRef(database, "Cases");
-      const snapshot = await get(casesRef);
-      
-      if (snapshot.exists()) {
-        let caseRefToUpdate = null;
-        
-        snapshot.forEach((childSnapshot) => {
-          const caseData = childSnapshot.val();
-          if (caseData.caseId === caseId) {
-            caseRefToUpdate = rtdbRef(database, `Cases/${childSnapshot.key}`);
-          }
-        });
-        
-        if (caseRefToUpdate) {
-          await update(caseRefToUpdate, { status: newStatus });
-          toast.success("Case status updated successfully");
-          return true;
-        } else {
-          toast.error("Case not found");
-          return false;
-        }
-      } else {
-        toast.error("No cases found");
-        return false;
-      }
-    } catch (error) {
-      console.error("Error updating case status:", error);
-      toast.error("Failed to update case status");
-      return false;
+      setMetamaskStatus("error");
+      setTimeout(() => {
+        setShowModal(false);
+        toast.error("Failed to submit case. Please try again later.");
+        setIsSubmitting(false);
+      }, 1500);
     }
   };
 
@@ -235,11 +249,6 @@ function AddCaseForm(props) {
   };
 
   useEffect(() => {
-    // You can add code here to fetch data if needed when component mounts
-    // For example, if editing an existing case:
-    // if (props.editMode && props.caseId) {
-    //   fetchCaseDetails(props.caseId);
-    // }
   }, [props.userDetails, props.CaseId]);
 
   return (
@@ -578,6 +587,94 @@ function AddCaseForm(props) {
                 </div>
               )}
             </form>
+          </div>
+        </div>
+      </div>
+
+      {/* MetaMask Connection Modal */}
+      {showModal && (
+        <div className="modal-backdrop show" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}></div>
+      )}
+      <div className={`modal ${showModal ? 'show d-block' : ''}`} tabIndex="-1" role="dialog" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content" style={{ backgroundColor: '#222', color: '#fff', border: '1px solid #444' }}>
+            <div className="modal-header" style={{ borderBottom: '1px solid #444' }}>
+              <h5 className="modal-title">
+                {metamaskStatus === "connecting" && "Connecting to MetaMask..."}
+                {metamaskStatus === "connected" && "Connected to MetaMask"}
+                {metamaskStatus === "submitting" && "Submitting Case..."}
+                {metamaskStatus === "success" && "Case Submitted Successfully!"}
+                {metamaskStatus === "error" && "Connection Error"}
+              </h5>
+            </div>
+            <div className="modal-body text-center py-4">
+              {metamaskStatus === "connecting" && (
+                <div className="d-flex flex-column align-items-center">
+                  <div className="mb-3" style={{ width: '80px', height: '80px' }}>
+                    <img src="https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg" alt="MetaMask" style={{ width: '100%', height: '100%' }} />
+                  </div>
+                  <div className="spinner-border text-warning mb-3" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p>Please confirm the connection in the MetaMask popup</p>
+                </div>
+              )}
+              
+              {metamaskStatus === "connected" && (
+                <div className="d-flex flex-column align-items-center">
+                  <div className="mb-3" style={{ width: '80px', height: '80px' }}>
+                    <img src="https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg" alt="MetaMask" style={{ width: '100%', height: '100%' }} />
+                  </div>
+                  <div className="text-success mb-3" style={{ fontSize: '3rem' }}>
+                    <FaCheck />
+                  </div>
+                  <p>Wallet connected successfully!</p>
+                  <p className="text-muted">Preparing to submit your case...</p>
+                </div>
+              )}
+              
+              {metamaskStatus === "submitting" && (
+                <div className="d-flex flex-column align-items-center">
+                  <div className="spinner-border text-primary mb-3" role="status" style={{ width: '3rem', height: '3rem' }}>
+                    <span className="visually-hidden">Submitting...</span>
+                  </div>
+                  <p>Uploading documents and submitting your case...</p>
+                  <div className="progress w-100 mt-3" style={{ height: '8px' }}>
+                    <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style={{ width: '100%' }}></div>
+                  </div>
+                </div>
+              )}
+              
+              {metamaskStatus === "success" && (
+                <div className="d-flex flex-column align-items-center">
+                  <div className="text-success mb-3" style={{ fontSize: '4rem' }}>
+                    <FaCheck />
+                  </div>
+                  <h4 className="text-success mb-3">Success!</h4>
+                  <p>Your case has been submitted successfully.</p>
+                  <p className="text-muted">You will be redirected momentarily...</p>
+                </div>
+              )}
+              
+              {metamaskStatus === "error" && (
+                <div className="d-flex flex-column align-items-center">
+                  <div className="text-danger mb-3" style={{ fontSize: '4rem' }}>
+                    <i className="fas fa-exclamation-circle"></i>
+                  </div>
+                  <h4 className="text-danger mb-3">Error</h4>
+                  <p>There was a problem connecting to MetaMask or submitting your case.</p>
+                  <p>Please try again later.</p>
+                </div>
+              )}
+            </div>
+            
+            {metamaskStatus === "error" && (
+              <div className="modal-footer" style={{ borderTop: '1px solid #444' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                  Close
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

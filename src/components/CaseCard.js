@@ -687,7 +687,7 @@ function CaseCard({
                 : `Payment received and case closed`
               }
               {paymentStatus.amount !== "0" && (
-                <span> - <b>${paymentStatus.amount}</b></span>
+                <span> - <b>RS - {paymentStatus.amount}</b></span>
               )}
             </div>
           )}
@@ -717,7 +717,7 @@ function CaseCard({
                   }}
                 >
                   <FaMoneyBillWave className="me-2" style={{ color: "#0077FF" }} />
-                  <span>${paymentStatus.amount}</span>
+                  <span>RS {paymentStatus.amount}</span>
                 </div>
               </div>
               <div 
@@ -746,7 +746,7 @@ function CaseCard({
               }}
             >
               <FaMoneyBillWave className="me-2" style={{ color: "#0077FF" }} />
-              Payment of <b>${paymentStatus.amount}</b> requested - awaiting client confirmation
+              Payment of <b> RS- {paymentStatus.amount}</b> requested - awaiting client confirmation
             </div>
           )}
 
@@ -786,7 +786,7 @@ function CaseCard({
                         border: "1px solid #444"
                       }}
                     >
-                      $
+                      RS -
                     </span>
                   </div>
                   <input
