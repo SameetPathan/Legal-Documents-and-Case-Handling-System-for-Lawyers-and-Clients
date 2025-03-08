@@ -1,21 +1,60 @@
 import { useEffect, useState } from "react";
-import { getDatabase, ref as rtdbRef, onValue } from "firebase/database";
-import { app } from "../../firebaseConfig";
+import { getDatabase, ref as rtdbRef, onValue, get } from "firebase/database";
+import { database } from "../../firebaseConfig";
 import DashboardHeading from "../DashboardHeading";
 import CaseCard from "../CaseCard";
 import { ethers } from "ethers";
 import { casesABI, casesAddress } from "../contractAddress";
-
-var arraylist = [];
-var whole = [];
-var CaseIds = [];
+import { FaSearch, FaSpinner } from "react-icons/fa";
 
 function ViewCases(props) {
   const [cases, setCases] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [w, setw] = useState([]);
+  const [filteredCases, setFilteredCases] = useState([]);
   const [keyword, setKeyword] = useState("");
-  async function getAllproducts() {
+  const [loading, setLoading] = useState(true);
+  const [dataSource, setDataSource] = useState("firebase"); // "firebase" or "blockchain"
+
+  // Function to fetch cases from Firebase
+  const fetchCasesFromFirebase = async () => {
+    setLoading(true);
+    try {
+      // Reference to the Cases node in Firebase
+      const casesRef = rtdbRef(database, "Cases");
+      
+      // Get all cases from Firebase
+      const snapshot = await get(casesRef);
+      
+      if (snapshot.exists()) {
+        const casesData = [];
+        
+        // Convert Firebase object to array and add the Firebase key as id
+        snapshot.forEach((childSnapshot) => {
+          const caseData = {
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          casesData.push(caseData);
+        });
+        
+        // Set the cases
+        setCases(casesData);
+        setFilteredCases(casesData);
+        console.log("Firebase Cases Data:", casesData);
+      } else {
+        console.log("No cases found in Firebase");
+        setCases([]);
+        setFilteredCases([]);
+      }
+    } catch (error) {
+      console.error("Error fetching cases from Firebase:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch cases from Blockchain (keeping as fallback)
+  const fetchCasesFromBlockchain = async () => {
+    setLoading(true);
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -26,50 +65,167 @@ function ViewCases(props) {
           casesABI,
           signer
         );
-        arraylist = await caseContract.getAllCases();
-        CaseIds = await caseContract.getAllCaseIds();
+        const arraylist = await caseContract.getAllCases();
+        const caseIds = await caseContract.getAllCaseIds();
 
-        for (var i = 0; i < arraylist.length; i++) {
-          whole[i] = arraylist[i];
+        const blockchainCases = [];
+        for (let i = 0; i < arraylist.length; i++) {
+          blockchainCases.push({
+            ...arraylist[i],
+            blockchainId: caseIds[i]
+          });
         }
-        setw(whole);
-        setCases(whole);
-        setFilteredProducts(whole);
-        //console.log("### Ether Cases Data : ", whole);
-        //console.log("caseIDS:", CaseIds);
+        
+        setCases(blockchainCases);
+        setFilteredCases(blockchainCases);
+        console.log("Blockchain Cases Data:", blockchainCases);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching cases from blockchain:", error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  // Function to filter cases based on keyword
+  const filterCases = (keyword) => {
+    if (!keyword.trim()) {
+      setFilteredCases(cases);
+      return;
+    }
+    
+    const filtered = cases.filter((caseData) => {
+      // Search in case ID
+      const caseId = caseData.caseId || 
+                    (caseData.titleDescription && caseData.titleDescription.split("_")[2]) || 
+                    "";
+      
+      // Search in case title
+      const caseTitle = caseData.caseTitle || 
+                       (caseData.titleDescription && caseData.titleDescription.split("_")[0]) || 
+                       "";
+      
+      // Search in case type
+      const caseType = caseData.caseType || "";
+      
+      // Search in client name
+      const clientName = caseData.fullName || 
+                        (caseData.fullNameAndPhoneNumber && caseData.fullNameAndPhoneNumber.split("_")[0]) || 
+                        "";
+      
+      // Search in client phone
+      const clientPhone = caseData.phoneNumber || 
+                         (caseData.fullNameAndPhoneNumber && caseData.fullNameAndPhoneNumber.split("_")[1]) || 
+                         "";
+      
+      const searchTerm = keyword.toLowerCase();
+      
+      return caseId.toLowerCase().includes(searchTerm) ||
+             caseTitle.toLowerCase().includes(searchTerm) ||
+             caseType.toLowerCase().includes(searchTerm) ||
+             clientName.toLowerCase().includes(searchTerm) ||
+             clientPhone.toLowerCase().includes(searchTerm);
+    });
+    
+    setFilteredCases(filtered);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setKeyword(value);
+    filterCases(value);
+  };
+
+  // Toggle data source (for testing purposes)
+  const toggleDataSource = () => {
+    const newSource = dataSource === "firebase" ? "blockchain" : "firebase";
+    setDataSource(newSource);
+    
+    if (newSource === "firebase") {
+      fetchCasesFromFirebase();
+    } else {
+      fetchCasesFromBlockchain();
+    }
+  };
 
   useEffect(() => {
-    getAllproducts();
-  }, []);
+    // Fetch cases based on the selected data source
+    if (dataSource === "firebase") {
+      fetchCasesFromFirebase();
+    } else {
+      fetchCasesFromBlockchain();
+    }
+  }, [dataSource]);
 
   return (
     <>
       <DashboardHeading text={"View Cases"} />
       <div className="container-fluid mt-4" style={{ marginBottom: "30%" }}>
+        {/* Search Bar */}
+        <div className="card mb-4" style={{ backgroundColor: "#000", color: "#fff", border: "1px solid #333" }}>
+          <div className="card-body">
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <span 
+                  className="input-group-text" 
+                  style={{ 
+                    backgroundColor: "#222", 
+                    color: "#fff",
+                    border: "1px solid #444"
+                  }}
+                >
+                  <FaSearch />
+                </span>
+              </div>
+              <input 
+                type="text" 
+                className="form-control" 
+                onChange={handleSearchChange} 
+                value={keyword} 
+                placeholder="Search by case ID, title, client name, or phone number..." 
+                style={{ 
+                  backgroundColor: "#222", 
+                  color: "#fff",
+                  border: "1px solid #444"
+                }}
+              />
+            </div>
+            
+            {/* Optional: Data Source Toggle (You can remove this in production) */}
+            <div className="d-flex justify-content-end mt-3">
+              <button 
+                className="btn btn-sm"
+                onClick={toggleDataSource}
+                style={{ 
+                  backgroundColor: "#333", 
+                  color: "#fff",
+                  border: "none"
+                }}
+              >
+                Data Source: {dataSource === "firebase" ? "Firebase" : "Blockchain"}
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <div class=" container input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">Search By Case Number</span>
-      </div>
-      <input type="text" class="form-control"  onChange={(e) => setKeyword(e.target.value)} value={keyword} placeholder="Case number" aria-label="Case Number" aria-describedby="basic-addon1"/>
-    </div>
-
-        <div className="row">
-          {cases
-            .filter((caseData) => {
-              const caseString = JSON.stringify(caseData).toLowerCase();
-              return caseString.includes(keyword.toLowerCase());
-            }).map(
-            (
-              caseData,
-              index 
-            ) => (
-              <div key={caseData.id} className="col-md-4">
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+            <div className="text-center">
+              <FaSpinner className="fa-spin mb-2" style={{ fontSize: "2rem", color: "#0077FF" }} />
+              <p className="text-muted">Loading cases...</p>
+            </div>
+          </div>
+        ) : filteredCases.length === 0 ? (
+          <div className="alert" style={{ backgroundColor: "#222", color: "#fff", border: "1px solid #333" }}>
+            <p className="mb-0 text-center">
+              {keyword ? "No cases match your search criteria." : "No cases found."}
+            </p>
+          </div>
+        ) : (
+          <div className="row">
+            {filteredCases.map((caseData, index) => (
+              <div key={caseData.id || index} className="col-md-4 mb-4">
                 <CaseCard
                   hideSensative={false}
                   showclose={false}
@@ -77,14 +233,14 @@ function ViewCases(props) {
                   isclient={false}
                   setcurrentCase={props.setcurrentCase}
                   caseData={caseData}
-                  CaseId={CaseIds[index]}
+                  CaseId={caseData.caseId || caseData.blockchainId}
                   userDetails={props.userDetails}
-                />{" "}
-               
+                  firebaseId={caseData.id} // Pass Firebase ID to CaseCard
+                />
               </div>
-            )
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
