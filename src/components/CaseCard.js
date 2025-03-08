@@ -926,7 +926,7 @@ function CaseCard({
       )}
 
       {/* Start Case Button for Lawyers */}
-      {!isclient && !showtake && lawyerName && caseStatus === "Taken" && (
+      {!isclient && caseStatus === "Taken" && (
         <div 
           className="card-footer" 
           style={{ 
@@ -1031,7 +1031,7 @@ function CaseCard({
           )}
 
           {/* Lawyer Payment Request UI */}
-          {!isclient && showclose && (paymentStatus.status === "not_initiated" || !paymentStatus.status) && (caseStatus === "Started" || caseStatus === "In Progress") && (
+          {!isclient && showclose && paymentStatus.status === "not_initiated" && (
             <div className="card-footer" style={{ backgroundColor: "#111", borderTop: "1px solid #333" }}>
               <div className="d-flex justify-content-between align-items-center">
                 <Button 
@@ -1085,6 +1085,8 @@ function CaseCard({
               </div>
             </div>
           )}
+
+          
         </>
       )}
 

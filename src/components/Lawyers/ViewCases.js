@@ -214,8 +214,9 @@ function ViewCases(props) {
             {filteredCases.map((caseData, index) => (
               <div key={caseData.id || index} className="col-md-4 mb-4">
                 <CaseCard
-                  hideSensative={false}
-                  showclose={false}
+                  hideSensative={true}
+                  showclose={true}
+                  showchat={true}
                   showtake={true}
                   isclient={false}
                   setcurrentCase={props.setcurrentCase}
