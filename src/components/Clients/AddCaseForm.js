@@ -13,9 +13,10 @@ import { toast } from "react-toastify";
 
 function AddCaseForm(props) {
   const [formData, setFormData] = useState({
-    fullName: props.isclient ? props.userDetails[0] : "",
-    currentAddress: props.isclient ? props.userDetails[3] : "",
-    phoneNumber: props.isclient ? props.userDetails[1] : "",
+    addedBy:props.userDetails[1],
+    fullName: "",
+    currentAddress: "",
+    phoneNumber: "",
     caseTitle: "",
     caseDescription: "",
     caseType: "",
@@ -292,7 +293,6 @@ function AddCaseForm(props) {
                         </label>
                         <input
                           type="text"
-                          disabled={props.isclient}
                           className="form-control"
                           id="fullName"
                           name="fullName"
@@ -312,7 +312,6 @@ function AddCaseForm(props) {
                           type="tel"
                           className="form-control"
                           id="phoneNumber"
-                          disabled={props.isclient}
                           name="phoneNumber"
                           value={formData.phoneNumber}
                           onChange={handleInputChange}
@@ -330,7 +329,6 @@ function AddCaseForm(props) {
                     <textarea
                       className="form-control"
                       id="currentAddress"
-                      disabled={props.isclient}
                       name="currentAddress"
                       value={formData.currentAddress}
                       onChange={handleInputChange}

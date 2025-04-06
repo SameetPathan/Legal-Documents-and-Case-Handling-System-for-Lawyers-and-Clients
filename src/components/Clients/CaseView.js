@@ -15,10 +15,9 @@ function CaseView(props) {
   const [filterStatus, setFilterStatus] = useState("all"); 
 
 
-  const fetchCasesFromFirebase = async () => {
+  const fetchCasesFromMetaMask = async () => {
     setLoading(true);
     try {
-
       const casesRef = rtdbRef(database, "Cases");
       
       // Get all cases from Blockchain
@@ -28,17 +27,26 @@ function CaseView(props) {
         const casesData = [];
         
         // Convert Blockchain object to array and add the Blockchain key as id
+        // Only include cases where addedBy matches props.userDetails[1]
         snapshot.forEach((childSnapshot) => {
           const caseData = {
             id: childSnapshot.key,
             ...childSnapshot.val()
           };
-          casesData.push(caseData);
+          
+          // Filter to only include cases that match the current user's addedBy value
+          if (caseData.addedBy === props.userDetails[1]) {
+            casesData.push(caseData);
+          }
         });
         
         // Set the cases
         setCases(casesData);
         setFilteredCases(casesData);
+        
+        if (casesData.length === 0) {
+          console.log("No cases found for this user");
+        }
       } else {
         console.log("No cases found in Blockchain");
         setCases([]);
@@ -167,7 +175,7 @@ function CaseView(props) {
       fetchClientCases();
     } else {
       // Otherwise fetch all cases (for admin or lawyer view)
-      fetchCasesFromFirebase();
+      fetchCasesFromMetaMask();
     }
   }, [props.userDetails]);
 

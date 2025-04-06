@@ -59,6 +59,7 @@ function CaseCard({
 
   // Helper functions to get case data properties
   const getCaseId = () => caseData?.caseId || "N/A";
+  const getaddedBy = ()=> caseData?.addedBy || "";
   const getCaseTitle = () => caseData?.caseTitle || "N/A";
   const getCaseDescription = () => caseData?.caseDescription || "N/A";
   const getClientName = () => caseData?.fullName || "N/A";
@@ -544,6 +545,7 @@ function CaseCard({
 
   // Extract data using helper functions
   const caseId = getCaseId();
+  const addedBy = getaddedBy();
   const caseTitle = getCaseTitle();
   const caseDesc = getCaseDescription();
   const clientName = getClientName();
