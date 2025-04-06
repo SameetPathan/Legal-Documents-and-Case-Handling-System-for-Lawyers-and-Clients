@@ -55,14 +55,14 @@ const UserProfileForm = () => {
         const isprofile = await ProfileContract.userExists(accounts[0]);
         if (isprofile) {
           const profile = await ProfileContract.getProfileById(accounts[0]);
-            setisuserProfile(profile);
+            setisuserProfile(true);
             setFullName(profile[0]);
             setPhoneNumber(profile[1]);
             setEmailId(profile[2]);
             setUserAddress(profile[3]);
             setUserType(profile[4]);
         } else {
-          setisuserProfile([]);
+          setisuserProfile(false);
         }
       }
     } catch (error) {

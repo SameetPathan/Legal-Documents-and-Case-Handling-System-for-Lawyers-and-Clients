@@ -23,6 +23,7 @@ import ChatComponent from './components/Chats';
 import { ethers } from "ethers";
 import { profileABI, profileAddress } from './components/contractAddress';
 import ViewPickedCases from './components/Lawyers/ViewPickedCases';
+import AdminProfiles from './components/AdminProfiles';
 
 
 
@@ -94,6 +95,7 @@ function App() {
                  <Route exact path='/' element={ <UserHandler setuserDetails={setuserDetails} userDetails={userDetails}></UserHandler>}></Route>
                  <Route exact path='/profile' element={<UserProfileForm ></UserProfileForm>}></Route>
                  <Route exact path='/client' element={ <ClientHome ></ClientHome>}></Route>
+                 <Route exact path='/admin' element={<AdminProfiles></AdminProfiles>}></Route>
                  <Route exact path='/lawyer' element={<LawyerHome></LawyerHome>}></Route>
                  <Route exact path='/client-add-case' element={<AddCaseForm isclient={userDetails[4]==="client"} userDetails={userDetails}> </AddCaseForm>}></Route>
                  <Route exact path='/client-case-status' element={<CaseView setcurrentCase={setcurrentCase} userDetails={userDetails} setcurrentCaseName={setcurrentCaseName}></CaseView>}></Route>
